@@ -1,17 +1,12 @@
 #include <iostream>
 #include "Net.h"
-#include "Layer.h"
-#include "Neuron.h"
-#include "Connection.h"
-#include <ctime>
-
+const int BIAS_NEURON = 1;
 using namespace std;
 int main() {
     vector<int> Topology;
-    Topology.push_back(1);
-    Topology.push_back(3);
-    Topology.push_back(2);
-    Topology.push_back(1);
+    Topology.push_back(256);
+    Topology.push_back(50 + BIAS_NEURON);
+    Topology.push_back(30 + BIAS_NEURON);
     Topology.push_back(2);
     Net myNet(Topology);
     return 0;

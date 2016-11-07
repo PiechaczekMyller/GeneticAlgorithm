@@ -3,6 +3,7 @@
 //
 
 #include "Net.h"
+const int InputAndOutputLayers = 2;
 
 Net::Net(vector<int> Topology) {
     CreateLayers(Topology);
@@ -29,12 +30,13 @@ void Net::CreateLayers(vector<int> Topology) {
     int LayersCounter = 0;
     Layer InputLayer(Topology[LayersCounter]);
     TempLayerVector.push_back(InputLayer);
-    for (int i = 0; i < Topology.size() - 2; i++)
+    for (int i = 0; i < Topology.size() - InputAndOutputLayers; i++)
     {
         LayersCounter++;
         Layer HiddenLayer(Topology[LayersCounter]);
         TempLayerVector.push_back(HiddenLayer);
     }
+    LayersCounter++;
     Layer OutputLayer(Topology[LayersCounter]);
     TempLayerVector.push_back(OutputLayer);
     this->setM_Layers(TempLayerVector);
