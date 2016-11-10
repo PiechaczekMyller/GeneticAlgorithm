@@ -2,30 +2,32 @@
 // Created by user on 2016-11-06.
 //
 
-#include "Net.h"
+#include "NeuralNet.h"
 const int InputAndOutputLayers = 2;
 
-Net::Net(vector<int> Topology) {
+NeuralNet::NeuralNet(vector<int> Topology) {
+    this->Topology = Topology;
     CreateLayers(Topology);
     CreateConnections(Topology);
 }
-const vector<vector<Connection>> &Net::getM_Connections() const {
+
+const vector<vector<Connection>> &NeuralNet::getM_Connections() const {
     return m_Connections;
 }
 
-const vector<Layer> &Net::getM_Layers() const {
+const vector<Layer> &NeuralNet::getM_Layers() const {
     return m_Layers;
 }
 
-void Net::setM_Connections(const vector<vector<Connection>> &m_ConnectionsVector) {
-    Net::m_Connections = m_ConnectionsVector;
+void NeuralNet::setM_Connections(const vector<vector<Connection>> &m_ConnectionsVector) {
+    NeuralNet::m_Connections = m_ConnectionsVector;
 }
 
-void Net::setM_Layers(const vector<Layer> &m_LayersVector) {
-    Net::m_Layers = m_LayersVector;
+void NeuralNet::setM_Layers(const vector<Layer> &m_LayersVector) {
+    NeuralNet::m_Layers = m_LayersVector;
 }
 
-void Net::CreateLayers(vector<int> Topology) {
+void NeuralNet::CreateLayers(vector<int> Topology) {
     vector<Layer> TempLayerVector;
     int LayersCounter = 0;
     Layer InputLayer(Topology[LayersCounter]);
@@ -42,7 +44,7 @@ void Net::CreateLayers(vector<int> Topology) {
     this->setM_Layers(TempLayerVector);
 }
 
-void Net::CreateConnections(vector<int> Topology){
+void NeuralNet::CreateConnections(vector<int> Topology){
     vector<vector<Connection>> TempConnections;
     int min = -5;
     int max = 5;
@@ -65,5 +67,20 @@ void Net::CreateConnections(vector<int> Topology){
     this->setM_Connections(TempConnections);
 }
 
-Net::~Net() {}
+void NeuralNet::ProcessDataForward()
+{
+    double SingleInput = 0;
+    int ConnectionsCounter = 0;
+    for (int ProcessedLayer = 0; ProcessedLayer < this->getM_Connections().size(); ProcessedLayer++)
+    {
+        for(int RightLayerNeuron = 0; RightLayerNeuron < this->getM_Layers()[ProcessedLayer + 1].getM_NeuronsLayer().size(); RightLayerNeuron++)
+        {
+            for(int LeftLayerNeuron = 0; LeftLayerNeuron < this->getM_Layers()[ProcessedLayer].getM_NeuronsLayer().size(); LeftLayerNeuron++)
+            {
+                SingleInput = this->getM_Connections()[ProcessedLayer][ConnectionsCounter].getM_Weight() * this->getM_Layers()[ProcessedLayer].getM_NeuronsLayer()[LeftLayerNeuron].getM_Output();
+            }
+        }
+    }
+}
+NeuralNet::~NeuralNet() {}
 

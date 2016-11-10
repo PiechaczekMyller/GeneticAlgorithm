@@ -27,6 +27,8 @@ public:
     void setM_SquaredError(double m_SquaredError);
 
     virtual ~Neuron();
+
+    void AddValue(double Value);
 };
 
 

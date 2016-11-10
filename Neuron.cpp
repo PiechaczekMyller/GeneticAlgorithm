@@ -33,6 +33,10 @@ void Neuron::setM_SquaredError(double m_SquaredError) {
     Neuron::m_SquaredError = m_SquaredError;
 }
 
+void Neuron::AddValue (double Value)
+{
+     this->setM_Input(this->getM_Input() + Value);
+}
 Neuron::~Neuron() {
 
 }

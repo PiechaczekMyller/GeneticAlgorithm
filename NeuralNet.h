@@ -13,12 +13,13 @@
 #include <random>
 using namespace std;
 
-class Net {
+class NeuralNet {
 private:
     vector<vector<Connection>> m_Connections;
     vector<Layer> m_Layers;
+    vector<int> Topology;
 public:
-    Net(vector<int>);
+    NeuralNet(vector<int>);
 
     void CreateLayers(vector<int>);
 
@@ -32,7 +33,9 @@ public:
 
     void CreateConnections(vector<int> Topology);
 
-    virtual ~Net();
+    virtual ~NeuralNet();
+
+    void ProcessDataForward();
 };
 
 
