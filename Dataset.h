@@ -27,6 +27,11 @@ public:
 		}
 	};
 
+	Dataset(const Dataset& dataset){
+		vectorOfFeatures = dataset.getVectorOfFeatures();
+		vectorOfLabels = dataset.getVectorOfLabels();
+	}
+
 	const std::vector<std::vector<FeaturesType>> &getVectorOfFeatures() const{
 		return vectorOfFeatures;
 	};
