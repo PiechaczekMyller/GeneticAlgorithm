@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Net.h"
+#include "Dataset.h"
 const int BIAS_NEURON = 1;
 using namespace std;
 int main() {
