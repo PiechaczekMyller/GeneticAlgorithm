@@ -3,6 +3,6 @@ project(GeneticAlgorithm)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp NeuralNet.cpp NeuralNet.h Connection.cpp Connection.h Neuron.cpp Neuron.h Layer.cpp Layer.h Dataset.h Exceptions/FeaturesLabesLenNotEqualExc.cpp Exceptions/FeaturesLabesLenNotEqualExc.h LoadingDatasetFunctions.cpp LoadingDatasetFunctions.h)
+set(SOURCE_FILES main.cpp Neural_Net/NeuralNet.cpp Neural_Net/NeuralNet.h Neural_Net/Connection.cpp Neural_Net/Connection.h Neural_Net/Neuron.cpp Neural_Net/Neuron.h Neural_Net/Layer.cpp Neural_Net/Layer.h Dataset.h Exceptions/FeaturesLabesLenNotEqualExc.cpp Exceptions/FeaturesLabesLenNotEqualExc.h LoadingDatasetFunctions.cpp LoadingDatasetFunctions.h)
 
 add_executable(GeneticAlgorithm ${SOURCE_FILES})

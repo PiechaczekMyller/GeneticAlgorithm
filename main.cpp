@@ -1,17 +1,27 @@
 #include <iostream>
-#include "NeuralNet.h"
+#include "Neural_Net/NeuralNet.h"
 #include "Dataset.h"
 #include "LoadingDatasetFunctions.h"
-const int BIAS_NEURON = 1;
 using namespace std;
 int main() {
     vector<int> Topology;
-    Topology.push_back(256);
-    Topology.push_back(50 + BIAS_NEURON);
-    Topology.push_back(30 + BIAS_NEURON);
+    Topology.push_back(7);
+    Topology.push_back(5);
+    Topology.push_back(3);
     Topology.push_back(2);
-    NeuralNet myNet(Topology);
-	char path[] = "/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/ecu_1_100_dtf3_train.dat";
-	Dataset<double,bool> dataset=LoadingDatasetFromFile(path);
+    vector<double> Data;
+    Data.push_back(0.1);
+    Data.push_back(0.9);
+    Data.push_back(0.5);
+    Data.push_back(0.2);
+    Data.push_back(0.6);
+    Data.push_back(0.4);
+    Data.push_back(0.3);
+    NeuralNet Net(Topology);
+    Net.ChangeOutputsInInputLayer(Data);
+    Net.SetOutputOfBiasNeuron(1);
+    Net.ProcessDataForward();
+//	char path[] = "/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/ecu_1_100_dtf3_train.dat";
+//	Dataset<double,bool> dataset=LoadingDatasetFromFile(path);
     return 0;
 }

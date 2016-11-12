@@ -11,9 +11,9 @@ Dataset<double, bool> LoadingDatasetFromFile(char *path){
 	const int LABELBYTES = 1;
 	const int FEATUREBYTES = 8;
 	const int BYTESBEETWENLINES = 25;
-	static_assert(sizeof(double) == 8);
-	static_assert(sizeof(int) == 4);
-	static_assert(sizeof(bool) == 1);
+	static_assert(sizeof(double) == 8, "elo");
+	static_assert(sizeof(int) == 4, "elo");
+	static_assert(sizeof(bool) == 1, "elo");
 
 	ifstream file(path, ios::in | ios::binary | ios::ate);
 	if(file.is_open()){

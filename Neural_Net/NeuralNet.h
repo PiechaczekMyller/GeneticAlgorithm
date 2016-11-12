@@ -21,21 +21,25 @@ private:
 public:
     NeuralNet(vector<int>);
 
-    void CreateLayers(vector<int>);
+    void CreateLayers();
 
-    const vector<vector<Connection>> &getM_Connections() const;
+    vector<vector<Connection>> &getM_Connections();
 
-    const vector<Layer> &getM_Layers() const;
+    vector<Layer> &getM_Layers();
 
     void setM_Connections(const vector<vector<Connection>> &m_ConnectionsVector);
 
     void setM_Layers(const vector<Layer> &m_LayersVector);
 
-    void CreateConnections(vector<int> Topology);
+    void CreateConnections();
 
     virtual ~NeuralNet();
 
     void ProcessDataForward();
+
+    void ChangeOutputsInInputLayer(vector<double> NewOutputs);
+
+    void SetOutputOfBiasNeuron(double);
 };
 
 

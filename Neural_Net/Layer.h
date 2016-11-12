@@ -16,7 +16,7 @@ private:
 public:
     Layer(int);
 
-    const vector<Neuron> &getM_NeuronsLayer() const;
+    vector<Neuron> &getM_NeuronsLayer();
 
     void setM_NeuronsLayer(const vector<Neuron> &m_NeuronsLayer);
 
