@@ -2,6 +2,7 @@
 #include "NeuralNet.h"
 #include "Dataset.h"
 #include "LoadingDatasetFunctions.h"
+#include "GeneticAlgorithm.h"
 const int BIAS_NEURON = 1;
 using namespace std;
 int main() {
@@ -13,5 +14,8 @@ int main() {
     NeuralNet myNet(Topology);
 	char path[] = "/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/ecu_1_100_dtf3_train.dat";
 	Dataset<double,bool> dataset=LoadingDatasetFromFile(path);
+	GeneticAlgorithm<double,bool> geneticAlgorithm(dataset);
+	geneticAlgorithm.run();
+
     return 0;
 }
