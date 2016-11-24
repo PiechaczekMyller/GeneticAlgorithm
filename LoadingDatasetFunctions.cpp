@@ -16,6 +16,7 @@ Dataset<double, bool> LoadingDatasetFromFile(char *path){
 	static_assert(sizeof(double) == 8,"bo tak");
 	static_assert(sizeof(int) == 4,"bo tak");
 	static_assert(sizeof(bool) == 1,"bo tak");
+
 	ifstream file(path, ios::in | ios::binary | ios::ate);
 	if(file.is_open()){
 		getDataDimension(dimensionOfData, file, size, memblock);

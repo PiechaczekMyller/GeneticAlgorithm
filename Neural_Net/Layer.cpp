@@ -4,7 +4,7 @@
 
 #include "Layer.h"
 
-const vector<Neuron> &Layer::getM_NeuronsLayer() const {
+vector<Neuron> &Layer::getM_NeuronsLayer() {
     return m_NeuronsLayer;
 }
 

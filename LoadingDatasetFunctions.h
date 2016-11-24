@@ -8,6 +8,7 @@
 #include "Dataset.h"
 #include "Dataset.h"
 #include <fstream>
+#include <cstring>
 #include <iostream>
 #include <vector>
 

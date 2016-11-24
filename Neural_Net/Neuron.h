@@ -28,7 +28,7 @@ public:
 
     virtual ~Neuron();
 
-    void AddValue(double Value);
+    void AddToInput(double Value);
 };
 
 
