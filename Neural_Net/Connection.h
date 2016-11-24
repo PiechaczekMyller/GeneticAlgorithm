@@ -8,18 +8,18 @@
 
 class Connection {
 private:
-    double m_Weight;
-    double m_DeltaWeight;
+    double Weight;
+    double Delta_Weight;
 public:
     Connection(double m_Weight);
 
-    double getM_Weight() const;
+    double get_Weight() const;
 
-    void setM_Weight(double m_Weight);
+    void set_Weight(double m_Weight);
 
-    double getM_DeltaWeight() const;
+    double get_Delta_Weight() const;
 
-    void setM_DeltaWeight(double m_DeltaWeight);
+    void set_Delta_Weight(double m_DeltaWeight);
 
     virtual ~Connection();
 };

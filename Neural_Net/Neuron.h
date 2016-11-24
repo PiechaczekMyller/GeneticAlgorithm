@@ -5,30 +5,33 @@
 #ifndef NEURALNETGA_NEURON_H
 #define NEURALNETGA_NEURON_H
 #include <iostream>
+#include <cmath>
 
 class Neuron {
 private:
-    double m_Input;
-    double m_Output;
-    double m_SquaredError;
+    double Input;
+    double Output;
+    double Squared_Error;
 public:
     Neuron();
 
-    double getM_Input() const;
+    double get_Input() const;
 
-    void setM_Input(double m_Input);
+    void set_Input(double m_Input);
 
-    double getM_Output() const;
+    double get_Output() const;
 
-    void setM_Output(double m_Output);
+    void set_Output(double m_Output);
 
-    double getM_SquaredError() const;
+    double get_Squared_Error() const;
 
-    void setM_SquaredError(double m_SquaredError);
+    void set_Squared_Error(double m_SquaredError);
 
     virtual ~Neuron();
 
     void AddToInput(double Value);
+
+    double ActivationFunction();
 };
 
 

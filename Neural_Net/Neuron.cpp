@@ -2,40 +2,46 @@
 // Created by user on 2016-11-06.
 //
 #include "Neuron.h"
+const double BETA = 1;
 
 Neuron::Neuron() {
-    m_Input = 0;
-    m_Output = 0;
-    m_SquaredError = 0;
+    Input = 0;
+    Output = 0;
+    Squared_Error = 0;
 }
 
-double Neuron::getM_Input() const {
-    return m_Input;
+double Neuron::get_Input() const {
+    return Input;
 }
 
-void Neuron::setM_Input(double m_Input) {
-    Neuron::m_Input = m_Input;
+void Neuron::set_Input(double m_Input) {
+    Neuron::Input = m_Input;
 }
 
-double Neuron::getM_Output() const {
-    return m_Output;
+double Neuron::get_Output() const {
+    return Output;
 }
 
-void Neuron::setM_Output(double m_Output) {
-    Neuron::m_Output = m_Output;
+void Neuron::set_Output(double m_Output) {
+    Neuron::Output = m_Output;
 }
 
-double Neuron::getM_SquaredError() const {
-    return m_SquaredError;
+double Neuron::get_Squared_Error() const {
+    return Squared_Error;
 }
 
-void Neuron::setM_SquaredError(double m_SquaredError) {
-    Neuron::m_SquaredError = m_SquaredError;
+void Neuron::set_Squared_Error(double m_SquaredError) {
+    Neuron::Squared_Error = m_SquaredError;
 }
 
 void Neuron::AddToInput(double newValue)
 {
-     this->m_Input = this->m_Input + newValue;
+     Input = Input + newValue;
+}
+
+double Neuron::ActivationFunction(){
+    double new_output = 1 / (1 + exp(-BETA * Input));
+    Output = new_output;
 }
 Neuron::~Neuron() {
 

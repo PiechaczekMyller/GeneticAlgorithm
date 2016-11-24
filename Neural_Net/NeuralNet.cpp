@@ -3,7 +3,7 @@
 //
 
 #include "NeuralNet.h"
-#include "MathFunctions.h"
+
 const int InputAndOutputLayers = 2;
 int BIAS_NEURON = 1;
 
@@ -13,106 +13,111 @@ NeuralNet::NeuralNet(vector<int> Topology) {
     CreateConnections();
 }
 
-vector<vector<Connection>> &NeuralNet::getM_Connections() {
-    return m_Connections;
+vector<vector<Connection>> &NeuralNet::get_Connections() {
+    return Connections;
 }
 
-vector<Layer> &NeuralNet::getM_Layers() {
-    return m_Layers;
+vector<Layer> &NeuralNet::get_Layers() {
+    return Layers;
 }
 
-void NeuralNet::setM_Connections(const vector<vector<Connection>> &m_ConnectionsVector) {
-    NeuralNet::m_Connections = m_ConnectionsVector;
+void NeuralNet::set_Connections(const vector<vector<Connection>> &m_ConnectionsVector) {
+    NeuralNet::Connections = m_ConnectionsVector;
 }
 
-void NeuralNet::setM_Layers(const vector<Layer> &m_LayersVector) {
-    NeuralNet::m_Layers = m_LayersVector;
+void NeuralNet::set_Layers(const vector<Layer> &m_LayersVector) {
+    NeuralNet::Layers = m_LayersVector;
 }
 
 void NeuralNet::CreateLayers() {
-    vector<Layer> TempLayerVector;
-    int LayersCounter = 0;
-    Layer InputLayer(Topology[LayersCounter]);
-    TempLayerVector.push_back(InputLayer);
+    vector<Layer> temp_layer_vector;
+    int layers_counter = 0;
+    Layer InputLayer(Topology[layers_counter]);
+    temp_layer_vector.push_back(InputLayer);
     for (int i = 0; i < Topology.size() - InputAndOutputLayers; i++)
     {
-        LayersCounter++;
-        Layer HiddenLayer(Topology[LayersCounter] + BIAS_NEURON);
-        TempLayerVector.push_back(HiddenLayer);
+        layers_counter++;
+        Layer HiddenLayer(Topology[layers_counter] + BIAS_NEURON);
+        temp_layer_vector.push_back(HiddenLayer);
     }
-    LayersCounter++;
-    Layer OutputLayer(Topology[LayersCounter]);
-    TempLayerVector.push_back(OutputLayer);
-    this->setM_Layers(TempLayerVector);
+    layers_counter++;
+    Layer OutputLayer(Topology[layers_counter]);
+    temp_layer_vector.push_back(OutputLayer);
+    this->set_Layers(temp_layer_vector);
 }
 
 void NeuralNet::CreateConnections(){
     vector<vector<Connection>> TempConnections;
     int min = -5;
     int max = 5;
-    double RandomWeight = 0;
-    for(int Connections = 0; Connections < Topology.size() - 1; Connections++)
+    double random_weight = 0;
+    for(int connections = 0; connections < Topology.size() - 1; connections++)
     {
-        vector<Connection> ConnectionsVector;
-        if (Connections == 0) //check if first layer
+        vector<Connection> connections_vector;
+        if (connections == 0) //check if it is the first layer
             BIAS_NEURON = 0;
         else
             BIAS_NEURON = 1;
-        for(int j = 0; j < (Topology[Connections] + BIAS_NEURON) * Topology[Connections + 1]; j++)
+        for(int j = 0; j < (Topology[connections] + BIAS_NEURON) * Topology[connections + 1]; j++)
         {
             random_device rd;
             mt19937 rng(rd());
             uniform_int_distribution<int> uni(min, max);
-            RandomWeight = uni(rng);
-            RandomWeight = RandomWeight / 10;
-            Connection myConnection(RandomWeight);
-            ConnectionsVector.push_back(myConnection);
+            random_weight = uni(rng);
+            random_weight = random_weight / 10;
+            Connection myConnection(random_weight);
+            connections_vector.push_back(myConnection);
         }
-        TempConnections.push_back(ConnectionsVector);
+        TempConnections.push_back(connections_vector);
     }
-    this->setM_Connections(TempConnections);
+    this->set_Connections(TempConnections);
 }
 
 void NeuralNet::SetOutputOfBiasNeuron(double Output)
 {
-    for (int HiddenLayer = 1; HiddenLayer <= Topology.size() - InputAndOutputLayers; HiddenLayer++)
+    for (int hidden_layer = 1; hidden_layer <= Topology.size() - InputAndOutputLayers; hidden_layer++)
     {
-     this->getM_Layers()[HiddenLayer].getM_NeuronsLayer().back().setM_Output(Output);
+        this->get_Layers()[hidden_layer].get_Neurons_Layer().back().set_Output(Output);
     }
 }
 
 void NeuralNet::ProcessDataForward()
 {
-    double SingleInput = 0;
-    int ConnectionsCounter = 0;
-    double NewNeuronOutput = 0;
-    for (int ProcessedLayer = 0; ProcessedLayer < this->getM_Connections().size(); ProcessedLayer++)
+    double single_input = 0;
+    int connections_counter = 0;
+    for (int processed_layer = 0; processed_layer < this->get_Connections().size(); processed_layer++)
     {
-        ConnectionsCounter = 0;
-        if (ProcessedLayer == this->getM_Connections().size() - 1) //check if it is last layer
+        connections_counter = 0;
+        if (processed_layer == this->get_Connections().size() - 1) //check if it is the last layer
             BIAS_NEURON = 0;
         else
             BIAS_NEURON = 1;
-        for(int RightLayerNeuron = 0; RightLayerNeuron < this->getM_Layers()[ProcessedLayer + 1].getM_NeuronsLayer().size() - BIAS_NEURON; RightLayerNeuron++)
+        for(int RightLayerNeuron = 0; RightLayerNeuron <
+                this->get_Layers()[processed_layer + 1].get_Neurons_Layer().size() - BIAS_NEURON; RightLayerNeuron++)
         {
-            for(int LeftLayerNeuron = 0; LeftLayerNeuron < this->getM_Layers()[ProcessedLayer].getM_NeuronsLayer().size(); LeftLayerNeuron++)
+            for(int LeftLayerNeuron = 0; LeftLayerNeuron < this->get_Layers()[processed_layer].get_Neurons_Layer().size(); LeftLayerNeuron++)
             {
-                SingleInput = this->getM_Connections()[ProcessedLayer][ConnectionsCounter].getM_Weight() * this->getM_Layers()[ProcessedLayer].getM_NeuronsLayer()[LeftLayerNeuron].getM_Output();
-                this->getM_Layers()[ProcessedLayer + 1].getM_NeuronsLayer()[RightLayerNeuron].AddToInput(SingleInput);
-                ConnectionsCounter++;
+                single_input = this->get_Connections()[processed_layer][connections_counter].get_Weight() *
+                        this->get_Layers()[processed_layer].get_Neurons_Layer()[LeftLayerNeuron].get_Output();
+                this->get_Layers()[processed_layer + 1].get_Neurons_Layer()[RightLayerNeuron].AddToInput(single_input);
+                connections_counter++;
             }
-            NewNeuronOutput = ActivationFunction(this->getM_Layers()[ProcessedLayer + 1].getM_NeuronsLayer()[RightLayerNeuron].getM_Input());
-            this->getM_Layers()[ProcessedLayer + 1].getM_NeuronsLayer()[RightLayerNeuron].setM_Output(NewNeuronOutput);
+                this->get_Layers()[processed_layer + 1].get_Neurons_Layer()[RightLayerNeuron].ActivationFunction();
         }
     }
 }
 
-void NeuralNet::ChangeOutputsInInputLayer(vector<double> NewOutputs)
+void NeuralNet::ChangeOutputsInInputLayer(vector<double> new_outputs)
 {
-    for (int Neuron = 0; Neuron < Topology[0]; Neuron++)
+    for (int neuron = 0; neuron < Topology[0]; neuron++)
     {
-        this->getM_Layers()[0].getM_NeuronsLayer()[Neuron].setM_Output(NewOutputs[Neuron]);
+        this->get_Layers()[0].get_Neurons_Layer()[neuron].set_Output(new_outputs[neuron]);
     }
 }
+
+void NeuralNet::BackPropagation() {
+
+}
+
 NeuralNet::~NeuralNet() {}
 
