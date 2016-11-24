@@ -3,7 +3,7 @@
 //
 
 #include "NeuralNet.h"
-
+#include "../Exceptions/DifferentSizesOfVectors.h"
 const int InputAndOutputLayers = 2;
 int BIAS_NEURON = 1;
 
@@ -109,9 +109,12 @@ void NeuralNet::ProcessDataForward()
 
 void NeuralNet::ChangeOutputsInInputLayer(vector<double> new_outputs)
 {
-    for (int neuron = 0; neuron < Topology[0]; neuron++)
-    {
-        this->get_Layers()[0].get_Neurons_Layer()[neuron].set_Output(new_outputs[neuron]);
+    if (new_outputs.size() != Topology[0])
+        throw DifferentSizesOfVectors("Neural Net: Input layer vector size and new_outputs vector size should be equal!");
+    else {
+        for (int neuron = 0; neuron < Topology[0]; neuron++) {
+            this->get_Layers()[0].get_Neurons_Layer()[neuron].set_Output(new_outputs[neuron]);
+        }
     }
 }
 

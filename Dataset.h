@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <stdlib.h>
-#include "Exceptions/FeaturesLabesLenNotEqualExc.h"
+#include "Exceptions/DifferentSizesOfVectors.h"
 
 template <typename FeaturesType, typename LabelsType>
 class Dataset{
@@ -21,7 +21,7 @@ public:
 	Dataset(const std::vector<std::vector<FeaturesType>> &vectorOfFeaturesToLoad,
 	        const std::vector<LabelsType> &vectorOfLabelsToLoad){
 		if(vectorOfFeaturesToLoad.size() != vectorOfLabelsToLoad.size()){
-			throw FeaturesLabesLenNotEqualExc();
+			throw DifferentSizesOfVectors("Dataset: Features and labels vectors are not equal in length");
 		}
 		else{
 			vectorOfFeatures = vectorOfFeaturesToLoad;
@@ -46,7 +46,7 @@ public:
 	Dataset(const std::vector<std::vector<FeaturesType>> &vectorOfFeaturesToLoad,
 	        const std::vector<LabelsType> &vectorOfLabelsToLoad, int numberOfClasses){
 		if(vectorOfFeaturesToLoad.size() != vectorOfLabelsToLoad.size()){
-			throw FeaturesLabesLenNotEqualExc();
+            throw DifferentSizesOfVectors("Features and labels vectors are not equal in length");
 		}
 		else{
 			vectorOfFeatures = vectorOfFeaturesToLoad;
