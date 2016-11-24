@@ -1,11 +1,16 @@
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "NeuralNet.h"
 #include "Dataset.h"
 #include "LoadingDatasetFunctions.h"
-#include "GeneticAlgorithm.h"
+#include "GeneticAlgorithm/GeneticAlgorithm.h"
+#include "GeneticAlgorithm/Gene.h"
 const int BIAS_NEURON = 1;
 using namespace std;
 int main() {
+	srand(time(0));
     vector<int> Topology;
     Topology.push_back(256);
     Topology.push_back(50 + BIAS_NEURON);
@@ -15,7 +20,8 @@ int main() {
 	char path[] = "/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/ecu_1_100_dtf3_train.dat";
 	Dataset<double,bool> dataset=LoadingDatasetFromFile(path);
 	GeneticAlgorithm<double,bool> geneticAlgorithm(dataset);
+	geneticAlgorithm.sizeOfPopulation=1;
+	geneticAlgorithm.sizeOfIndyvidual =200;
 	geneticAlgorithm.run();
-
     return 0;
 }

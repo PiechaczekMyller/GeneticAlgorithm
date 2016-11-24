@@ -1,7 +1,9 @@
 //
 // Created by Szymek on 11.11.2016.
 //
+#include <exception>
 #include "LoadingDatasetFunctions.h"
+
 
 Dataset<double, bool> LoadingDatasetFromFile(char *path){
 	streampos size;
@@ -14,26 +16,25 @@ Dataset<double, bool> LoadingDatasetFromFile(char *path){
 	static_assert(sizeof(double) == 8,"bo tak");
 	static_assert(sizeof(int) == 4,"bo tak");
 	static_assert(sizeof(bool) == 1,"bo tak");
-
 	ifstream file(path, ios::in | ios::binary | ios::ate);
 	if(file.is_open()){
 		getDataDimension(dimensionOfData, file, size, memblock);
-		vector<bool> Labels;
-		vector<vector<double>> Features;
+		vector<bool> labels;
+		vector<vector<double>> features;
 		for(int loopControl = OFFSET; loopControl < size; loopControl = loopControl + BYTESBEETWENLINES){
 			vector<double> Feature;
-			getLabel(memblock, Labels, loopControl);
+			getLabel(memblock, labels, loopControl);
 			char featureBuffer[8];
 			double feature;
 			getFirstFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
 			getSecondFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
 			getThirdFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
-			Features.push_back(Feature);
+			features.push_back(Feature);
 		}
 		file.close();
-		cout << "Dataset loaded" << endl;
 		delete[] memblock;
-		Dataset<double, bool> dataset(Features, Labels);
+		Dataset<double, bool> dataset(features, labels);
+		cout << "Dataset loaded" << endl;
 		return dataset;
 	}
 }

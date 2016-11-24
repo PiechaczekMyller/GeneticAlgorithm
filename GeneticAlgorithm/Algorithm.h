@@ -5,7 +5,7 @@
 #ifndef GENETICALGORITHM_ALGORITHM_H
 #define GENETICALGORITHM_ALGORITHM_H
 
-#include "Dataset.h"
+#include "../Dataset.h"
 template <typename featureType, typename labelType>
 class Algorithm{
 public:
