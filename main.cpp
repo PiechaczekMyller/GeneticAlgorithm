@@ -1,19 +1,14 @@
 #include <iostream>
-<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "NeuralNet.h"
+#include "Neural_Net/NeuralNet.h"
 #include "Dataset.h"
 #include "LoadingDatasetFunctions.h"
 #include "GeneticAlgorithm/GeneticAlgorithm.h"
 #include "GeneticAlgorithm/Gene.h"
 const int BIAS_NEURON = 1;
-=======
-#include "Neural_Net/NeuralNet.h"
-#include "Dataset.h"
-#include "LoadingDatasetFunctions.h"
->>>>>>> 9e0ebad187e91eec5a998b338312a88ca15a8cd9
+
 using namespace std;
 int main() {
 	srand(time(0));
