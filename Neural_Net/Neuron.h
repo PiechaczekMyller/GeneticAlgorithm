@@ -11,7 +11,7 @@ class Neuron {
 private:
     double Input;
     double Output;
-    double Squared_Error;
+    double Propagated_Error;
 public:
     Neuron();
 
@@ -23,15 +23,20 @@ public:
 
     void set_Output(double m_Output);
 
-    double get_Squared_Error() const;
+    double get_Propagated_Error() const;
 
-    void set_Squared_Error(double m_SquaredError);
+    void set_Propagated_Error(double m_Propagated_Error);
 
     virtual ~Neuron();
 
     void AddToInput(double Value);
 
-    double ActivationFunction();
+    void ActivationFunction();
+
+    double Derivative();
+
+    void AddToPropagatedError(double error);
+
 };
 
 

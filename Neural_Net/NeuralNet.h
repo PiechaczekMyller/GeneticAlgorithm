@@ -9,9 +9,11 @@
 #include <exception>
 #include "Connection.h"
 #include "Layer.h"
+#include "../Exceptions/DifferentSizesOfVectors.h"
 #include <cstdlib>
 #include <ctime>
 #include <random>
+#include <algorithm>
 using namespace std;
 
 class NeuralNet {
@@ -42,7 +44,25 @@ public:
 
     void SetOutputOfBiasNeuron(double);
 
-    void BackPropagation();
+    void BackPropagationForLastLayer(vector<double> desired_outputs);
+
+    void BackPropagationForHiddenLayers();
+
+    void UpdateWeights(double learning_rate);
+
+    void ResetInputs();
+
+    void ResetPropagatedError();
+
+    void
+    Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double learning_rate, double accuracy);
+
+    double CalculateSquaredError(vector<double> desired_outputs);
+
+    void Predict(vector<double> data_to_predict);
+
+    void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double learning_rate,
+                    double accuracy);
 };
 
 

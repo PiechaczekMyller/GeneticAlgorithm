@@ -9,17 +9,12 @@
 class Connection {
 private:
     double Weight;
-    double Delta_Weight;
 public:
     Connection(double m_Weight);
 
     double get_Weight() const;
 
     void set_Weight(double m_Weight);
-
-    double get_Delta_Weight() const;
-
-    void set_Delta_Weight(double m_DeltaWeight);
 
     virtual ~Connection();
 };

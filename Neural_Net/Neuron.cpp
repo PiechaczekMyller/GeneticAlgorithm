@@ -7,15 +7,15 @@ const double BETA = 1;
 Neuron::Neuron() {
     Input = 0;
     Output = 0;
-    Squared_Error = 0;
+    Propagated_Error = 0;
 }
 
 double Neuron::get_Input() const {
     return Input;
 }
 
-void Neuron::set_Input(double m_Input) {
-    Neuron::Input = m_Input;
+void Neuron::set_Input(double Input) {
+    Neuron::Input = Input;
 }
 
 double Neuron::get_Output() const {
@@ -26,23 +26,32 @@ void Neuron::set_Output(double m_Output) {
     Neuron::Output = m_Output;
 }
 
-double Neuron::get_Squared_Error() const {
-    return Squared_Error;
+double Neuron::get_Propagated_Error() const {
+    return Propagated_Error;
 }
 
-void Neuron::set_Squared_Error(double m_SquaredError) {
-    Neuron::Squared_Error = m_SquaredError;
+void Neuron::set_Propagated_Error(double Propagated_Error) {
+    Neuron::Propagated_Error = Propagated_Error;
 }
 
 void Neuron::AddToInput(double newValue)
 {
-     Input = Input + newValue;
+    Neuron::Input = Neuron::Input + newValue;
 }
 
-double Neuron::ActivationFunction(){
-    double new_output = 1 / (1 + exp(-BETA * Input));
+void Neuron::ActivationFunction(){
+    double new_output = 1 / (1 + exp(-BETA * Neuron::Input));
     Output = new_output;
 }
+
+double Neuron::Derivative() {
+    return Neuron::Output * (1 - Neuron::Output);
+}
+
+void Neuron::AddToPropagatedError(double error) {
+    Neuron::Propagated_Error = Neuron::Propagated_Error + error;
+}
+
 Neuron::~Neuron() {
 
 }
