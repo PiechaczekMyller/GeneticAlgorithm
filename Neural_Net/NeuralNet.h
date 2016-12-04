@@ -7,8 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <exception>
-#include "Connection.h"
-#include "Layer.h"
+#include "Neuron.h"
 #include "../Exceptions/DifferentSizesOfVectors.h"
 #include <cstdlib>
 #include <ctime>
@@ -18,21 +17,22 @@ using namespace std;
 
 class NeuralNet {
 private:
-    vector<vector<Connection>> Connections;
-    vector<Layer> Layers;
+    vector<vector<double>> Connections;
+    vector<vector<Neuron>> Layers;
     vector<int> Topology;
+    double LearningRate;
 public:
-    NeuralNet(vector<int>);
+    NeuralNet(vector<int>, double);
+
+    vector<vector<double>> &getConnections();
+
+    void setConnections(const vector<vector<double>> &Connections);
+
+    vector<vector<Neuron>> &getLayers();
+
+    void setLayers(const vector<vector<Neuron>> &Layers);
 
     void CreateLayers();
-
-    vector<vector<Connection>> &get_Connections();
-
-    vector<Layer> &get_Layers();
-
-    void set_Connections(const vector<vector<Connection>> &m_ConnectionsVector);
-
-    void set_Layers(const vector<Layer> &m_LayersVector);
 
     void CreateConnections();
 
@@ -48,20 +48,20 @@ public:
 
     void BackPropagationForHiddenLayers();
 
-    void UpdateWeights(double learning_rate);
+    void UpdateWeights();
 
     void ResetInputs();
 
     void ResetPropagatedError();
 
     void
-    Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double learning_rate, double accuracy);
+    Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy);
 
     double CalculateSquaredError(vector<double> desired_outputs);
 
     void Predict(vector<double> data_to_predict);
 
-    void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double learning_rate,
+    void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs,
                     double accuracy);
 };
 
