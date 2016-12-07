@@ -6,9 +6,9 @@
 #define GENETICALGORITHM_LOADINGDATASETFUNCTIONS_H
 
 #include "Dataset.h"
-#include "Dataset.h"
 #include <fstream>
 #include <cstring>
+#include <string>
 #include <iostream>
 #include <vector>
 
@@ -28,5 +28,7 @@ void getThirdFeature(const char *memblock, const int FEATUREBYTES, int loopContr
                      char *featureBuffer, double &feature);
 
 void getDataDimension(int &dimensionOfData, ifstream &file, streampos &size, char *&memblock);
+
+void LoadDataset(const char *path, vector<vector<double>> &features, vector<vector<double>> &labels, int n_inputs, int n_outputs);
 
 #endif //GENETICALGORITHM_LOADINGDATASETFUNCTIONS_H

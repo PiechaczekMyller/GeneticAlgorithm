@@ -82,3 +82,44 @@ void getLabel(const char *memblock, vector<bool, allocator<bool>> &Labels, int l
 	memcpy(&label, labelBuffer, sizeof(label));
 	Labels.push_back(label);
 }
+
+void LoadDataset(const char *path,vector<vector<double>> &features, vector<vector<double>> &labels, int n_inputs, int n_outputs)
+{
+	ifstream file;
+	string line;
+	file.open(path, ios::in);
+	int position = 0;
+	if (file.is_open())
+	{
+        cout << "Loading set..." << endl;
+		while(!file.eof())
+		{
+			getline(file, line);
+			if (line != "")
+			{
+				vector<double> feature;
+				for (position  = 0; position < n_inputs; position++)
+				{
+					if (line[position] == '1')
+						feature.push_back(1.0);
+					else if (line[position] == '0')
+						feature.push_back(0.0);
+				}
+				features.push_back(feature);
+				vector<double> label;
+				for (position; position < n_outputs + n_inputs; position++)
+				{
+					if (line[position] == '1')
+						label.push_back(1.0);
+					else if (line[position] == '0')
+						label.push_back(0.0);
+				}
+				labels.push_back(label);
+			}
+			else
+				break;
+		}
+	}
+    cout << "Set loaded!" << endl;
+	file.close();
+}
