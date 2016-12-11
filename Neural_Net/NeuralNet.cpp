@@ -305,7 +305,7 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
     }
 }
 
-void NeuralNet::PartialFit(Dataset dataset, double accuracy) {
+void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy) {
     double error = 100;
     vector<int> indexes;
     const char* path = "errors.txt";
