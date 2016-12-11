@@ -2,14 +2,28 @@
 // Created by user on 2016-11-06.
 //
 
+#include <fstream>
 #include "NeuralNet.h"
 const int InputAndOutputLayers = 2;
 
-NeuralNet::NeuralNet(vector<int> Topology, double learning_rate) {
+NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method, double dropout_probability) {
     this->Topology = Topology;
     this->LearningRate = learning_rate;
+    this->DropoutMethod = dropout_method;
+    this->DropoutProbability = dropout_probability;
     CreateLayers();
     CreateConnections();
+    this->SetOutputOfBiasNeuron(1.0);
+}
+
+NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method) {
+    this->Topology = Topology;
+    this->LearningRate = learning_rate;
+    this->DropoutMethod = dropout_method;
+    this->DropoutProbability = 0;
+    CreateLayers();
+    CreateConnections();
+    this->SetOutputOfBiasNeuron(1.0);
 }
 
 vector<vector<double>> &NeuralNet::getConnections(){
@@ -28,8 +42,7 @@ void NeuralNet::setLayers(const vector<vector<Neuron>> &Layers) {
     NeuralNet::Layers = Layers;
 }
 
-vector<Neuron> CreateSingleLayer(int number_of_neurons)
-{
+vector<Neuron> CreateSingleLayer(int number_of_neurons) {
     vector<Neuron> temp_neurons_layer;
     for(int i = 0; i < number_of_neurons; i++)
     {
@@ -81,8 +94,7 @@ void NeuralNet::CreateConnections(){
     this->setConnections(TempConnections);
 }
 
-void NeuralNet::SetOutputOfBiasNeuron(double Output)
-{
+void NeuralNet::SetOutputOfBiasNeuron(double Output) {
     for (int bias_layer = 0; bias_layer <= Topology.size() - 1; bias_layer++)
     {
         this->getLayers()[bias_layer].back().set_Output(Output);
@@ -109,8 +121,7 @@ void NeuralNet::ResetPropagatedError(){
     }
 }
 
-void NeuralNet::ProcessDataForward()
-{
+void NeuralNet::ProcessDataForward() {
     double single_input = 0;
     int connections_counter = 0;
     int BIAS_NEURON = 1;
@@ -121,13 +132,13 @@ void NeuralNet::ProcessDataForward()
             BIAS_NEURON = 0;
         else
             BIAS_NEURON = 1;
-        for(int RightLayerNeuron = 0; RightLayerNeuron <
-                this->getLayers()[processed_layer + 1].size() - BIAS_NEURON; RightLayerNeuron++)
+        if (this->DropoutMethod)
+            this->Dropout(processed_layer);
+        for(int RightLayerNeuron = 0; RightLayerNeuron < this->getLayers()[processed_layer + 1].size() - BIAS_NEURON; RightLayerNeuron++)
         {
             for(int LeftLayerNeuron = 0; LeftLayerNeuron < this->getLayers()[processed_layer].size(); LeftLayerNeuron++)
             {
-                single_input = this->getConnections()[processed_layer][connections_counter] *
-                        this->getLayers()[processed_layer][LeftLayerNeuron].get_Output();
+                single_input = this->getConnections()[processed_layer][connections_counter] * this->getLayers()[processed_layer][LeftLayerNeuron].get_Output();
                 this->getLayers()[processed_layer + 1][RightLayerNeuron].AddToInput(single_input);
                 connections_counter++;
             }
@@ -137,10 +148,9 @@ void NeuralNet::ProcessDataForward()
     this->ResetInputs();
 }
 
-void NeuralNet::ChangeOutputsInInputLayer(vector<double> new_outputs)
-{
+void NeuralNet::ChangeOutputsInInputLayer(vector<double> new_outputs) {
     if (new_outputs.size() != Topology[0])
-        throw DifferentSizesOfVectors("Neural Net: Input layer vector size and new_outputs vector size should be equal!");
+        throw DifferentSizesOfVectors("Neural Net(ChangeOutputsInInputLayer): Input layer vector size and new outputs vector size should be equal!");
     else {
         for (int neuron = 0; neuron < Topology[0]; neuron++) {
             this->getLayers()[0][neuron].set_Output(new_outputs[neuron]);
@@ -148,8 +158,7 @@ void NeuralNet::ChangeOutputsInInputLayer(vector<double> new_outputs)
     }
 }
 
-void NeuralNet::BackPropagationForLastLayer(vector<double> desired_outputs)
-{
+void NeuralNet::BackPropagationForLastLayer(vector<double> desired_outputs) {
     if (desired_outputs.size() != Topology.back())
         throw DifferentSizesOfVectors("Output layer vector size and desired outputs vector size are different, should be equal!");
     double error = 0;
@@ -208,8 +217,7 @@ void NeuralNet::UpdateWeights(){
     this->ResetPropagatedError();
 }
 
-double NeuralNet::CalculateSquaredError(vector<double> desired_outputs)
-{
+double NeuralNet::CalculateSquaredError(vector<double> desired_outputs) {
     if (desired_outputs.size() != Topology.back())
         throw DifferentSizesOfVectors("Output layer vector size and desired outputs vector size are different, should be equal!");
     double squared_error = 0;
@@ -222,31 +230,56 @@ double NeuralNet::CalculateSquaredError(vector<double> desired_outputs)
     return squared_error;
 }
 
-void NeuralNet::Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy)
-{
-    double error = 100;
-    double squared_error = 0;
-    while (error > accuracy)
-    {
-        squared_error = 0;
-        for (int i = 0; i < data_to_fit.size(); i++)
-        {
-            this->ChangeOutputsInInputLayer(data_to_fit[i]);
-            this->ProcessDataForward();
-            squared_error = squared_error + this->CalculateSquaredError(desired_outputs[i]);
-            this->BackPropagationForLastLayer(desired_outputs[i]);
-            this->BackPropagationForHiddenLayers();
-        }
-        this->UpdateWeights();
-        cout << "squared error: " << squared_error << endl;
-        error = squared_error;
-    }
+bool NeuralNet::ToDropOrNotToDrop() {
+    int min = 0;
+    int max = 9;
+    double random_weight;
+    random_device rd;
+    mt19937_64 rng(rd());
+    uniform_int_distribution<int> uni(min, max);
+    random_weight = uni(rng);
+    random_weight = random_weight / 10;
+    if (random_weight < this->DropoutProbability)
+        return true;
+    else
+        return false;
 }
 
-void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy)
-{
+void NeuralNet::Dropout(int layer_to_dropout){
+       for (auto &neuron : this->getLayers()[layer_to_dropout])
+       {
+           if (ToDropOrNotToDrop())
+                neuron.set_Output(0.0);
+       }
+}
+
+//void NeuralNet::Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy)
+//{
+//    double error = 100;
+//    double squared_error = 0;
+//    while (error > accuracy)
+//    {
+//        squared_error = 0;
+//        for (int i = 0; i < data_to_fit.size(); i++)
+//        {
+//            this->ChangeOutputsInInputLayer(data_to_fit[i]);
+//            this->ProcessDataForward(true);
+//            squared_error = squared_error + this->CalculateSquaredError(desired_outputs[i]);
+//            this->BackPropagationForLastLayer(desired_outputs[i]);
+//            this->BackPropagationForHiddenLayers();
+//        }
+//        this->UpdateWeights();
+//        cout << "squared error: " << squared_error << endl;
+//        error = squared_error;
+//    }
+//}
+
+void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy) {
     double error = 100;
     vector<int> indexes;
+    const char* path = "errors.txt";
+    ofstream file;
+    file.open(path);
     double squared_error = 0;
     for (int i = 0; i < data_to_fit.size(); i++)
     {
@@ -259,19 +292,51 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
         random_shuffle(indexes.begin(), indexes.end());
         for (int i = 0; i < indexes.size(); i++) {
             this->ChangeOutputsInInputLayer(data_to_fit[indexes[i]]);
-            this->ProcessDataForward();
+            this->ProcessDataForward(false);
             squared_error = squared_error + this->CalculateSquaredError(desired_outputs[indexes[i]]);
             this->BackPropagationForLastLayer(desired_outputs[indexes[i]]);
             this->BackPropagationForHiddenLayers();
             this->UpdateWeights();
         }
+        squared_error = squared_error / data_to_fit.size();
         cout << "squared error: " << squared_error << endl;
+        file << squared_error << endl;
         error = squared_error;
     }
 }
 
-void NeuralNet::Predict(vector<double> data_to_predict)
-{
+void NeuralNet::PartialFit(Dataset dataset, double accuracy) {
+    double error = 100;
+    vector<int> indexes;
+    const char* path = "errors.txt";
+    ofstream file;
+    file.open(path);
+    double squared_error = 0;
+    for (int i = 0; i < dataset.getVectorOfFeatures().size(); i++)
+    {
+        indexes.push_back(i);
+    }
+    random_shuffle(indexes.begin(), indexes.end());
+    while (error > accuracy)
+    {
+        squared_error = 0;
+        random_shuffle(indexes.begin(), indexes.end());
+        for (int i = 0; i < indexes.size(); i++) {
+            this->ChangeOutputsInInputLayer(dataset.getVectorOfFeatures()[indexes[i]]);
+            this->ProcessDataForward();
+            squared_error = squared_error + this->CalculateSquaredError(dataset.getVectorOfLabels()[indexes[i]]);
+            this->BackPropagationForLastLayer(dataset.getVectorOfLabels()[indexes[i]]);
+            this->BackPropagationForHiddenLayers();
+            this->UpdateWeights();
+        }
+        squared_error = squared_error / dataset.getVectorOfFeatures().size();
+        cout << "squared error: " << squared_error << endl;
+        file << squared_error << endl;
+        error = squared_error;
+    }
+}
+
+void NeuralNet::Predict(vector<double> data_to_predict) {
     this->ChangeOutputsInInputLayer(data_to_predict);
     this->ProcessDataForward();
     int index = 0;
@@ -283,5 +348,17 @@ void NeuralNet::Predict(vector<double> data_to_predict)
     }
 }
 
+void NeuralNet::SaveErrorsToFile(const char* path, vector<double> errors) {
+    ofstream file;
+    file.open(path, ios::out);
+    if (file.is_open()) {
+        for (auto error : errors) {
+            file << error << endl;
+        }
+    }
+    file.close();
+}
+
 NeuralNet::~NeuralNet() {}
+
 

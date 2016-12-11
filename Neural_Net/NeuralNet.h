@@ -8,6 +8,7 @@
 #include <vector>
 #include <exception>
 #include "Neuron.h"
+#include "../Dataset.h"
 #include "../Exceptions/DifferentSizesOfVectors.h"
 #include <cstdlib>
 #include <ctime>
@@ -21,8 +22,12 @@ private:
     vector<vector<Neuron>> Layers;
     vector<int> Topology;
     double LearningRate;
+    double DropoutProbability;
+    bool DropoutMethod;
 public:
-    NeuralNet(vector<int>, double);
+    NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method, double dropout_probability);
+
+    NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method);
 
     vector<vector<double>> &getConnections();
 
@@ -54,8 +59,8 @@ public:
 
     void ResetPropagatedError();
 
-    void
-    Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy);
+//    void
+//    Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy);
 
     double CalculateSquaredError(vector<double> desired_outputs);
 
@@ -63,6 +68,14 @@ public:
 
     void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs,
                     double accuracy);
+
+    void PartialFit(Dataset dataset, double accuracy);
+
+    void Dropout(int layer_to_dropout);
+
+    bool ToDropOrNotToDrop();
+
+    void SaveErrorsToFile(const char *path, vector<double> errors);
 };
 
 
