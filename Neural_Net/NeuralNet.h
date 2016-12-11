@@ -69,7 +69,7 @@ public:
     void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs,
                     double accuracy);
 
-    void PartialFit(Dataset dataset, double accuracy);
+    void PartialFit(Dataset<double,double> dataset, double accuracy);
 
     void Dropout(int layer_to_dropout);
 
