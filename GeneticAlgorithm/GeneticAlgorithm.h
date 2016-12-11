@@ -16,11 +16,10 @@ public:
 	int sizeOfPopulation = 100;
 	int sizeOfIndyvidual = 100;
 	double mutationCoefficient = 0.01;
-
+	Population<featureType, labelType> population;
 	GeneticAlgorithm(const Dataset<featureType, labelType> &dataset) : Algorithm<featureType, labelType>(dataset){ }
 
 	void run(){
-		Population<featureType, labelType> population;
 		population.CreateInitialPopulation(Algorithm<featureType, labelType>::dataset, sizeOfPopulation,
 		                                   sizeOfIndyvidual);
 		std::cout << "Initial population created" << std::endl;

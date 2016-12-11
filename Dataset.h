@@ -13,13 +13,13 @@ template <typename FeaturesType, typename LabelsType>
 class Dataset{
 private:
 	std::vector<std::vector<FeaturesType>> vectorOfFeatures;
-	std::vector<LabelsType> vectorOfLabels;
+	std::vector<std::vector<LabelsType>> vectorOfLabels;
 	std::vector<std::vector<long>> vectorOfIndexes;
 public:
 	Dataset(){ };
 
 	Dataset(const std::vector<std::vector<FeaturesType>> &vectorOfFeaturesToLoad,
-	        const std::vector<LabelsType> &vectorOfLabelsToLoad){
+	        const std::vector<std::vector<LabelsType>> &vectorOfLabelsToLoad){
 		if(vectorOfFeaturesToLoad.size() != vectorOfLabelsToLoad.size()){
 			throw DifferentSizesOfVectors("Dataset: Features and labels vectors are not equal in length");
 		}
@@ -30,34 +30,16 @@ public:
 			std::vector<long> aClassIndexes;
 			std::vector<long> bClassIndexes;
 			for(const auto &label:vectorOfLabels){
-				if(label == 0){
+				if(label[0] == 0){
 					aClassIndexes.push_back(index);
 				}
-				if(label == 1){
+				if(label[0] == 1){
 					bClassIndexes.push_back(index);
 				}
 				index++;
 			}
 			vectorOfIndexes.push_back(aClassIndexes);
 			vectorOfIndexes.push_back(bClassIndexes);
-		}
-	};
-
-	Dataset(const std::vector<std::vector<FeaturesType>> &vectorOfFeaturesToLoad,
-	        const std::vector<LabelsType> &vectorOfLabelsToLoad, int numberOfClasses){
-		if(vectorOfFeaturesToLoad.size() != vectorOfLabelsToLoad.size()){
-            throw DifferentSizesOfVectors("Features and labels vectors are not equal in length");
-		}
-		else{
-			vectorOfFeatures = vectorOfFeaturesToLoad;
-			vectorOfLabels = vectorOfLabelsToLoad;
-			long index = 0;
-			std::vector<long> aClass;
-			for(auto &label:vectorOfLabels){
-				if(label == 1){
-
-				}
-			}
 		}
 	};
 
@@ -71,7 +53,7 @@ public:
 		return vectorOfFeatures;
 	};
 
-	const std::vector<LabelsType> &getVectorOfLabels() const{
+	const std::vector<std::vector<LabelsType>> &getVectorOfLabels() const{
 		return vectorOfLabels;
 	};
 

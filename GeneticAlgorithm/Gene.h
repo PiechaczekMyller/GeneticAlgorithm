@@ -16,7 +16,7 @@ template <typename featureType, typename labelType>
 class Gene{
 private:
 	std::vector<featureType> feature;
-	labelType label;
+	std::vector<labelType> label;
 public:
 
 	Gene(){ }

@@ -14,7 +14,7 @@
 
 using namespace std;
 
-Dataset<double, bool> LoadingDatasetFromFile(char *path);
+//Dataset<double, bool> LoadingDatasetFromFile(char *path);
 
 void getLabel(const char *memblock, std::vector<bool> &Labels, int loopControl);
 

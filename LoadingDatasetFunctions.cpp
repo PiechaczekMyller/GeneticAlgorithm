@@ -5,40 +5,40 @@
 #include "LoadingDatasetFunctions.h"
 
 
-Dataset<double, bool> LoadingDatasetFromFile(char *path){
-	streampos size;
-	char *memblock;
-	int dimensionOfData;
-	const int OFFSET = 4;
-	const int LABELBYTES = 1;
-	const int FEATUREBYTES = 8;
-	const int BYTESBEETWENLINES = 25;
-	static_assert(sizeof(double) == 8,"bo tak");
-	static_assert(sizeof(int) == 4,"bo tak");
-	static_assert(sizeof(bool) == 1,"bo tak");
-
-	ifstream file(path, ios::in | ios::binary | ios::ate);
-	if(file.is_open()){
-		getDataDimension(dimensionOfData, file, size, memblock);
-		vector<bool> labels;
-		vector<vector<double>> features;
-		for(int loopControl = OFFSET; loopControl < size; loopControl = loopControl + BYTESBEETWENLINES){
-			vector<double> Feature;
-			getLabel(memblock, labels, loopControl);
-			char featureBuffer[8];
-			double feature;
-			getFirstFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
-			getSecondFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
-			getThirdFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
-			features.push_back(Feature);
-		}
-		file.close();
-		delete[] memblock;
-		Dataset<double, bool> dataset(features, labels);
-		cout << "Dataset loaded" << endl;
-		return dataset;
-	}
-}
+//Dataset<double, bool> LoadingDatasetFromFile(char *path){
+//	streampos size;
+//	char *memblock;
+//	int dimensionOfData;
+//	const int OFFSET = 4;
+//	const int LABELBYTES = 1;
+//	const int FEATUREBYTES = 8;
+//	const int BYTESBEETWENLINES = 25;
+//	static_assert(sizeof(double) == 8,"bo tak");
+//	static_assert(sizeof(int) == 4,"bo tak");
+//	static_assert(sizeof(bool) == 1,"bo tak");
+//
+//	ifstream file(path, ios::in | ios::binary | ios::ate);
+//	if(file.is_open()){
+//		getDataDimension(dimensionOfData, file, size, memblock);
+//		vector<bool> labels;
+//		vector<vector<double>> features;
+//		for(int loopControl = OFFSET; loopControl < size; loopControl = loopControl + BYTESBEETWENLINES){
+//			vector<double> Feature;
+//			getLabel(memblock, labels, loopControl);
+//			char featureBuffer[8];
+//			double feature;
+//			getFirstFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
+//			getSecondFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
+//			getThirdFeature(memblock, FEATUREBYTES, loopControl, Feature, featureBuffer, feature);
+//			features.push_back(Feature);
+//		}
+//		file.close();
+//		delete[] memblock;
+//		Dataset<double, bool> dataset(features, labels);
+//		cout << "Dataset loaded" << endl;
+//		return dataset;
+//	}
+//}
 
 void getDataDimension(int &dimensionOfData, ifstream &file, streampos &size, char *&memblock){
 	size = file.tellg();
