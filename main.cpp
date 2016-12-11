@@ -13,33 +13,26 @@ using namespace std;
 int main() {
 	srand(time(0));
     vector<int> Topology;
-    Topology.push_back(7);
-    Topology.push_back(5);
-    Topology.push_back(3);
-    Topology.push_back(2);
+    Topology.push_back(26);
+    Topology.push_back(50);
+    Topology.push_back(1);
 
-    NeuralNet myNet(Topology);
-	char path[] = "/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/ecu_1_100_dtf3_train.dat";
-	Dataset<double,bool> dataset=LoadingDatasetFromFile(path);
-	GeneticAlgorithm<double,bool> geneticAlgorithm(dataset);
-	geneticAlgorithm.sizeOfPopulation=1;
-	geneticAlgorithm.sizeOfIndyvidual =200;
-	geneticAlgorithm.run();
+	NeuralNet myNet(Topology,0.9,false);
+	vector<vector<double>> labels;
+	vector<vector<double>> features;
+	LoadDataset("/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/dataset.txt",features,labels,26,1);
+	Dataset<double,double> trainingSet(features, labels);
+	labels.clear();
+	features.clear();
+	LoadDataset("/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/testSet.txt",features,labels,26,1);
+	Dataset<double,double> testSet(features, labels);
+	myNet.PartialFit(trainingSet, 0.02);
+	cout << myNet.CheckAccuracy(trainingSet);
 
-    vector<double> Data;
-    Data.push_back(0.1);
-    Data.push_back(0.9);
-    Data.push_back(0.5);
-    Data.push_back(0.2);
-    Data.push_back(0.6);
-    Data.push_back(0.4);
-    Data.push_back(0.3);
-    NeuralNet Net(Topology);
-    Net.ChangeOutputsInInputLayer(Data);
-    Net.SetOutputOfBiasNeuron(1);
-    Net.ProcessDataForward();
-//	char path[] = "/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/ecu_1_100_dtf3_train.dat";
-//	Dataset<double,bool> dataset=LoadingDatasetFromFile(path);
-
-    return 0;
+//	GeneticAlgorithm<double,double> geneticAlgorithm(trainingSet);
+//	geneticAlgorithm.sizeOfPopulation=2;
+//	geneticAlgorithm.sizeOfIndyvidual =100;
+//	geneticAlgorithm.run();
+//	cout << "elo";
+	return 0;
 }

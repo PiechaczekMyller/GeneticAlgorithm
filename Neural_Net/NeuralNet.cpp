@@ -3,6 +3,7 @@
 //
 
 #include <fstream>
+#include <cmath>
 #include "NeuralNet.h"
 const int InputAndOutputLayers = 2;
 
@@ -142,7 +143,7 @@ void NeuralNet::ProcessDataForward() {
                 this->getLayers()[processed_layer + 1][RightLayerNeuron].AddToInput(single_input);
                 connections_counter++;
             }
-                this->getLayers()[processed_layer + 1][RightLayerNeuron].ActivationFunction();
+            this->getLayers()[processed_layer + 1][RightLayerNeuron].ActivationFunction();
         }
     }
     this->ResetInputs();
@@ -246,11 +247,11 @@ bool NeuralNet::ToDropOrNotToDrop() {
 }
 
 void NeuralNet::Dropout(int layer_to_dropout){
-       for (auto &neuron : this->getLayers()[layer_to_dropout])
-       {
-           if (ToDropOrNotToDrop())
-                neuron.set_Output(0.0);
-       }
+    for (auto &neuron : this->getLayers()[layer_to_dropout])
+    {
+        if (ToDropOrNotToDrop())
+            neuron.set_Output(0.0);
+    }
 }
 
 //void NeuralNet::Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy)
@@ -292,7 +293,7 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
         random_shuffle(indexes.begin(), indexes.end());
         for (int i = 0; i < indexes.size(); i++) {
             this->ChangeOutputsInInputLayer(data_to_fit[indexes[i]]);
-            this->ProcessDataForward(false);
+            this->ProcessDataForward();
             squared_error = squared_error + this->CalculateSquaredError(desired_outputs[indexes[i]]);
             this->BackPropagationForLastLayer(desired_outputs[indexes[i]]);
             this->BackPropagationForHiddenLayers();
@@ -336,16 +337,21 @@ void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy) {
     }
 }
 
-void NeuralNet::Predict(vector<double> data_to_predict) {
+vector<double> NeuralNet::Predict(vector<double> data_to_predict,bool echo) {
     this->ChangeOutputsInInputLayer(data_to_predict);
     this->ProcessDataForward();
     int index = 0;
+    vector<double> label;
     for (auto &neuron : this->getLayers().back())
     {
-        cout << "Predicted data:" << endl;
-        cout << "Output " << index << ": " << neuron.get_Output() << endl;
+        if (echo == true){
+            cout << "Predicted data:" << endl;
+            cout << "Output " << index << ": " << neuron.get_Output() << endl;
+        }
+        label.push_back(round(neuron.get_Output()));
         index++;
     }
+    return label;
 }
 
 void NeuralNet::SaveErrorsToFile(const char* path, vector<double> errors) {
@@ -359,6 +365,19 @@ void NeuralNet::SaveErrorsToFile(const char* path, vector<double> errors) {
     file.close();
 }
 
-NeuralNet::~NeuralNet() {}
+double NeuralNet::CheckAccuracy(Dataset<double, double> &testSet){
+    double correctPredictions = 0;
+    long sizeOfSet = testSet.getVectorOfLabels().size();
+    for (int loopControl = 0; loopControl<sizeOfSet;loopControl++){
+        vector<double> prediction = Predict(testSet.getVectorOfFeatures()[loopControl],false);
+        vector<double> correctAnswer = testSet.getVectorOfLabels()[loopControl];
+        if(prediction == correctAnswer){
+            correctPredictions++;
+        }
+    }
+    double score = correctPredictions/sizeOfSet;
+    return score;
+}
 
+NeuralNet::~NeuralNet() {}
 

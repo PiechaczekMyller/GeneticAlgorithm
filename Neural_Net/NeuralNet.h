@@ -18,64 +18,66 @@ using namespace std;
 
 class NeuralNet {
 private:
-    vector<vector<double>> Connections;
-    vector<vector<Neuron>> Layers;
-    vector<int> Topology;
-    double LearningRate;
-    double DropoutProbability;
-    bool DropoutMethod;
+	vector<vector<double>> Connections;
+	vector<vector<Neuron>> Layers;
+	vector<int> Topology;
+	double LearningRate;
+	double DropoutProbability;
+	bool DropoutMethod;
 public:
-    NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method, double dropout_probability);
+	NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method, double dropout_probability);
 
-    NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method);
+	NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method);
 
-    vector<vector<double>> &getConnections();
+	vector<vector<double>> &getConnections();
 
-    void setConnections(const vector<vector<double>> &Connections);
+	void setConnections(const vector<vector<double>> &Connections);
 
-    vector<vector<Neuron>> &getLayers();
+	vector<vector<Neuron>> &getLayers();
 
-    void setLayers(const vector<vector<Neuron>> &Layers);
+	void setLayers(const vector<vector<Neuron>> &Layers);
 
-    void CreateLayers();
+	void CreateLayers();
 
-    void CreateConnections();
+	void CreateConnections();
 
-    virtual ~NeuralNet();
+	virtual ~NeuralNet();
 
-    void ProcessDataForward();
+	void ProcessDataForward();
 
-    void ChangeOutputsInInputLayer(vector<double> new_outputs);
+	void ChangeOutputsInInputLayer(vector<double> new_outputs);
 
-    void SetOutputOfBiasNeuron(double);
+	void SetOutputOfBiasNeuron(double);
 
-    void BackPropagationForLastLayer(vector<double> desired_outputs);
+	void BackPropagationForLastLayer(vector<double> desired_outputs);
 
-    void BackPropagationForHiddenLayers();
+	void BackPropagationForHiddenLayers();
 
-    void UpdateWeights();
+	void UpdateWeights();
 
-    void ResetInputs();
+	void ResetInputs();
 
-    void ResetPropagatedError();
+	void ResetPropagatedError();
 
 //    void
 //    Fit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy);
 
-    double CalculateSquaredError(vector<double> desired_outputs);
+	double CalculateSquaredError(vector<double> desired_outputs);
 
-    void Predict(vector<double> data_to_predict);
+	vector<double> Predict(vector<double> data_to_predict, bool echo);
 
-    void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs,
-                    double accuracy);
+	void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs,
+	                double accuracy);
 
-    void PartialFit(Dataset<double,double> dataset, double accuracy);
+	void PartialFit(Dataset<double,double> dataset, double accuracy);
 
-    void Dropout(int layer_to_dropout);
+	void Dropout(int layer_to_dropout);
 
-    bool ToDropOrNotToDrop();
+	bool ToDropOrNotToDrop();
 
-    void SaveErrorsToFile(const char *path, vector<double> errors);
+	void SaveErrorsToFile(const char *path, vector<double> errors);
+
+	double CheckAccuracy(Dataset<double, double> &testSet);
 };
 
 
