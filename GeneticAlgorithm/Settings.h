@@ -5,7 +5,7 @@
 #ifndef GENETICALGORITHM_SETTINGS_H
 #define GENETICALGORITHM_SETTINGS_H
 struct Settings{
-	int populationSize;
+	int populationSize = 1;
 	double mutationProbability;
 	double crossoverProbability;
 	double randomPickProbability;

@@ -9,15 +9,16 @@
 
 class Indyvidual{
 private:
-	std::vector<vector<double>> featuresVector;
-	std::vector<vector<double>> labelsVector;
+	std::vector<std::vector<double>> featuresVector;
+	std::vector<std::vector<double>> labelsVector;
 	double fitnessScore = 0;
 public:
 
 
 	Indyvidual(){ }
 
-	Indyvidual(const vector<vector<double>> &featuresVector, const vector<vector<double>> &labelsVector)
+	Indyvidual(const std::vector<std::vector<double>> &featuresVector,
+	           const std::vector<std::vector<double>> &labelsVector)
 			: featuresVector(featuresVector), labelsVector(labelsVector){ };
 
 	virtual ~Indyvidual(){ };

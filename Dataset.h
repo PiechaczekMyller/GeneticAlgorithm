@@ -62,15 +62,19 @@ public:
 		return vectorOfIndexes;
 	};
 
-	long &getRandomAClassIndex(){
+	const long &getRandomAClassIndex() const{
 		long randomNumber = rand() % vectorOfIndexes[0].size();
 		return vectorOfIndexes[0][randomNumber];
 	};
 
-	long &getRandomBClassIndex(){
+	const long &getRandomBClassIndex() const{
 		long randomNumber = rand() % vectorOfIndexes[1].size();
 		return vectorOfIndexes[1][randomNumber];
 	};
+
+	const long &getLength() const{
+		return vectorOfLabels.size();
+	}
 
 	virtual ~Dataset(){ };
 
