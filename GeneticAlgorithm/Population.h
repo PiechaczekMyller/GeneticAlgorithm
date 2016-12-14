@@ -7,7 +7,9 @@
 
 #include <iostream>
 #include <vector>
+#include <cmath>
 #include "Indyvidual.h"
+#include "../Dataset.h"
 
 class Population{
 private:
@@ -16,9 +18,18 @@ public:
 
 	Population(){ }
 
-	Population(const vector<Indyvidual> &vectorOfIndyviduals) : vectorOfIndyviduals(vectorOfIndyviduals){ }
+	Population(const std::vector<Indyvidual> &vectorOfIndyviduals) : vectorOfIndyviduals(vectorOfIndyviduals){ }
+
+	void createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet);
 
 	virtual ~Population(){ };
+
+	void addAClassExample(const Dataset<double, double> &trainingSet, vector<vector<double>> &randomFeaturesVector,
+	                      vector<vector<double>> &labelsVector) const;
+
+	void addBClassExample(const Dataset<double, double> &trainingSet, vector<vector<double>> &randomFeaturesVector,
+	                      vector<vector<double>> &labelsVector) const;
 };
 
 #endif //GENETICALGORITHM_POPULATION_H
+

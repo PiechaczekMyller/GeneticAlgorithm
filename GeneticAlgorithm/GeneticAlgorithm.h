@@ -13,16 +13,20 @@
 class GeneticAlgorithm{
 private:
 	Population population;
-	Dataset trainingSet;
-	Dataset testSet;
+	Dataset<double, double> trainingSet;
+	Dataset<double, double> testSet;
 public:
 	Settings settings;
 
-	GeneticAlgorithm(const Dataset &trainingSet, const Dataset &testSet) : trainingSet(trainingSet),
-	                                                                       testSet(testSet){ };
+	GeneticAlgorithm(const Dataset<double, double> &trainingSet, const Dataset<double, double> &testSet) : trainingSet(
+			trainingSet),
+	                                                                                                       testSet(testSet){ };
 
-	GeneticAlgorithm(const Dataset &trainingSet, const Dataset &testSet, const Settings &settings) : trainingSet(
+	GeneticAlgorithm(const Dataset<double, double> &trainingSet, const Dataset<double, double> &testSet,
+	                 const Settings &settings) : trainingSet(
 			trainingSet), testSet(testSet), settings(settings){ }
+
+	void run();
 
 	virtual ~GeneticAlgorithm(){ }
 };
