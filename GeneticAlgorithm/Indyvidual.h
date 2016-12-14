@@ -6,36 +6,21 @@
 #define GENETICALGORITHM_INDYVIDUAL_H
 
 #include <vector>
-#include "Gene.h"
-#include "../Dataset.h"
 
-template <typename featureType, typename labelType>
 class Indyvidual{
-	std::vector<Gene<featureType, labelType>> vectorOfgenes;
-	bool isParent=0;
+private:
+	std::vector<vector<double>> featuresVector;
+	std::vector<vector<double>> labelsVector;
+	double fitnessScore = 0;
 public:
 
 
 	Indyvidual(){ }
 
-	const vector<Gene<featureType, labelType>> &getVectorOfgenes() const{
-		return vectorOfgenes;
-	}
+	Indyvidual(const vector<vector<double>> &featuresVector, const vector<vector<double>> &labelsVector)
+			: featuresVector(featuresVector), labelsVector(labelsVector){ };
 
-	void setVectorOfgenomes(const vector<Gene<featureType, labelType>> &vectorOfgenes){
-		Indyvidual::vectorOfgenes = vectorOfgenes;
-	}
-
-	void CreateRandomIndyvidual(Dataset<featureType, labelType> &dataset, int sizeOfIndyvidual){
-		for(int loopControl = 0; loopControl < sizeOfIndyvidual; loopControl=loopControl+2){
-			Gene<featureType, labelType> gene;
-			gene.createRandomAClassGene(dataset);
-			vectorOfgenes.push_back(gene);
-			gene.createRandomBClassGene(dataset);
-			vectorOfgenes.push_back(gene);
-		}
-	};
-
+	virtual ~Indyvidual(){ };
 };
 
 

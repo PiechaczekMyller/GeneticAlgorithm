@@ -6,24 +6,25 @@
 #define GENETICALGORITHM_GENETICALGORITHM_H
 
 #include <iostream>
-#include "Algorithm.h"
 #include "Population.h"
+#include "../Dataset.h"
+#include "Settings.h"
 
-template <typename featureType, typename labelType>
-class GeneticAlgorithm : public Algorithm<featureType, labelType>{
-
+class GeneticAlgorithm{
+private:
+	Population population;
+	Dataset trainingSet;
+	Dataset testSet;
 public:
-	int sizeOfPopulation = 100;
-	int sizeOfIndyvidual = 100;
-	double mutationCoefficient = 0.01;
-	Population<featureType, labelType> population;
-	GeneticAlgorithm(const Dataset<featureType, labelType> &dataset) : Algorithm<featureType, labelType>(dataset){ }
+	Settings settings;
 
-	void run(){
-		population.CreateInitialPopulation(Algorithm<featureType, labelType>::dataset, sizeOfPopulation,
-		                                   sizeOfIndyvidual);
-		std::cout << "Initial population created" << std::endl;
-	}
+	GeneticAlgorithm(const Dataset &trainingSet, const Dataset &testSet) : trainingSet(trainingSet),
+	                                                                       testSet(testSet){ };
+
+	GeneticAlgorithm(const Dataset &trainingSet, const Dataset &testSet, const Settings &settings) : trainingSet(
+			trainingSet), testSet(testSet), settings(settings){ }
+
+	virtual ~GeneticAlgorithm(){ }
 };
 
 

@@ -6,42 +6,19 @@
 #define GENETICALGORITHM_POPULATION_H
 
 #include <iostream>
+#include <vector>
 #include "Indyvidual.h"
-#include "../Dataset.h"
-template <typename featureType, typename labelType>
+
 class Population{
-	std::vector<Indyvidual<featureType,labelType>> vectorOfIndyviduals;
-	int generationNumber = 0;
+private:
+	std::vector<Indyvidual> vectorOfIndyviduals;
 public:
-	Population(){ };
 
-	const vector<Indyvidual<featureType, labelType>> &getVectorOfIndyviduals() const{
-		return vectorOfIndyviduals;
-	}
+	Population(){ }
 
-	void setVectorOfIndyviduals(const vector<Indyvidual<featureType, labelType>> &vectorOfIndyviduals){
-		Population::vectorOfIndyviduals = vectorOfIndyviduals;
-	}
+	Population(const vector<Indyvidual> &vectorOfIndyviduals) : vectorOfIndyviduals(vectorOfIndyviduals){ }
 
-	int getGenerationNumber() const{
-		return generationNumber;
-	}
-
-	void setGenerationNumber(int generationNumber){
-		Population::generationNumber = generationNumber;
-	}
-
-	void CreateInitialPopulation(Dataset<featureType,labelType> &dataset,int sizeOfPopulation, int sizeOfIndyvidual){
-		srand(time(NULL));
-		for(int loopControl = 0; loopControl < sizeOfPopulation; loopControl++){
-			Indyvidual <featureType,labelType> indyvidual;
-			indyvidual.CreateRandomIndyvidual(dataset,sizeOfIndyvidual);
-			vectorOfIndyviduals.push_back(indyvidual);
-		}
-	};
-
-	virtual ~Population(){}
+	virtual ~Population(){ };
 };
-
 
 #endif //GENETICALGORITHM_POPULATION_H
