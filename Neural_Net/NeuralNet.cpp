@@ -365,7 +365,7 @@ void NeuralNet::SaveErrorsToFile(const char* path, vector<double> errors) {
     file.close();
 }
 
-double NeuralNet::CheckAccuracy(Dataset<double, double> &testSet){
+double NeuralNet::CheckAccuracy(const Dataset<double, double> &testSet){
     double correctPredictions = 0;
     long sizeOfSet = testSet.getVectorOfLabels().size();
     for (int loopControl = 0; loopControl<sizeOfSet;loopControl++){

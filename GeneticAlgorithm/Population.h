@@ -22,13 +22,18 @@ public:
 
 	void createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet);
 
-	virtual ~Population(){ };
-
 	void addAClassExample(const Dataset<double, double> &trainingSet, vector<vector<double>> &randomFeaturesVector,
 	                      vector<vector<double>> &labelsVector) const;
 
 	void addBClassExample(const Dataset<double, double> &trainingSet, vector<vector<double>> &randomFeaturesVector,
 	                      vector<vector<double>> &labelsVector) const;
+
+	void checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet);
+
+	virtual ~Population(){ };
+
+	void setTopologyForNeuralNet(vector<int> &topology) const;
+
 };
 
 #endif //GENETICALGORITHM_POPULATION_H
