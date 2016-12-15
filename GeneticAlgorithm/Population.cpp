@@ -4,6 +4,7 @@
 
 #include <vector>
 #include "Population.h"
+#include "../Neural_Net/NeuralNet.h"
 
 
 void Population::createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet){
@@ -36,4 +37,24 @@ void Population::addAClassExample(const Dataset<double, double> &trainingSet,
 	long aClassIndex = trainingSet.getRandomAClassIndex();
 	randomFeaturesVector.push_back(trainingSet.getVectorOfFeatures()[aClassIndex]);
 	labelsVector.push_back(trainingSet.getVectorOfLabels()[aClassIndex]);
+}
+
+void Population::checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet){
+	vector<int> topology;
+	setTopologyForNeuralNet(topology);
+	double accuracy;
+	for(auto &indyvidual:vectorOfIndyviduals){
+		NeuralNet newNet(topology, 0.9, false);
+		newNet.PartialFit(indyvidual.getFeaturesVector(),
+		                  indyvidual.getLabelsVector(),
+		                  0.01);
+		accuracy = newNet.CheckAccuracy(testSet);
+		indyvidual.setFitnessScore(accuracy,sizeOfTrainingSet);
+	}
+}
+
+void Population::setTopologyForNeuralNet(vector<int> &topology) const{
+	topology.push_back(26);
+	topology.push_back(50);
+	topology.push_back(1);
 }

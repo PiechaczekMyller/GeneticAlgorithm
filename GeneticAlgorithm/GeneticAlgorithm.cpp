@@ -7,4 +7,10 @@
 void GeneticAlgorithm::run(){
 	Population population;
 	population.createInitialPopulation(settings.populationSize, trainingSet);
+	bool endCondition=false;
+	while(endCondition == false){
+		population.checkFitnessScores(testSet,trainingSet.getLength());
+
+		endCondition = true;
+	}
 }

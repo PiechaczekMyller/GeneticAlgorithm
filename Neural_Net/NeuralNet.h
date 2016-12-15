@@ -77,7 +77,7 @@ public:
 
 	void SaveErrorsToFile(const char *path, vector<double> errors);
 
-	double CheckAccuracy(Dataset<double, double> &testSet);
+	double CheckAccuracy(const Dataset<double, double> &testSet);
 };
 
 
