@@ -7,7 +7,7 @@
 struct Settings{
 	int populationSize = 10;
 	double mutationProbability;
-	double crossoverProbability;
+	double crossoverProbability=0.8;
 	double randomPickProbability;
 	double weightForAccuracy=0.8;
 	double weightForSize=0.2;

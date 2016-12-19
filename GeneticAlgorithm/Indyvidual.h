@@ -21,18 +21,20 @@ public:
 	Indyvidual(const std::vector<std::vector<double>> &featuresVector,
 	           const std::vector<std::vector<double>> &labelsVector)
 			: featuresVector(featuresVector), labelsVector(labelsVector){
-		sizeOfIndyvidual=labelsVector.size();
+		sizeOfIndyvidual = labelsVector.size();
 	};
 
-	const std::vector<std::vector<double>> &getFeaturesVector() const{
+	std::vector<std::vector<double>> &getFeaturesVector(){
 		return featuresVector;
 	}
 
-	const std::vector<std::vector<double>> &getLabelsVector() const{
+	std::vector<std::vector<double>> &getLabelsVector(){
 		return labelsVector;
 	}
 
 	void setFitnessScore(double &accuracy, long sizeOfTrainingSet);
+
+	friend void crossoverIndividual(double crossoverRatio, Indyvidual &firstIndividual, Indyvidual &secondIndividual);
 
 	virtual ~Indyvidual(){ };
 };

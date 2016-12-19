@@ -30,6 +30,8 @@ public:
 
 	void checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet);
 
+	void crossover(double crossoverRatio);
+
 	virtual ~Population(){ };
 
 	void setTopologyForNeuralNet(vector<int> &topology) const;
