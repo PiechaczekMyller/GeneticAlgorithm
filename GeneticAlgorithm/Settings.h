@@ -13,6 +13,7 @@ struct Settings{
 	double weightForSize=0.2;
 	double timeCondition;
 	double accuracyCondition;
+	double maxNoOfEpochs;
 
 };
 #endif //GENETICALGORITHM_SETTINGS_H

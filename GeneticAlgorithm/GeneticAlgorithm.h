@@ -28,6 +28,8 @@ public:
 
 	void run();
 
+	void CheckSettings();
+
 	virtual ~GeneticAlgorithm(){ }
 };
 

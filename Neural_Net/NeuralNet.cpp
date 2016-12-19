@@ -344,7 +344,7 @@ vector<double> NeuralNet::Predict(vector<double> data_to_predict,bool echo) {
     vector<double> label;
     for (auto &neuron : this->getLayers().back())
     {
-        if (echo == true){
+        if (echo){
             cout << "Predicted data:" << endl;
             cout << "Output " << index << ": " << neuron.get_Output() << endl;
         }
