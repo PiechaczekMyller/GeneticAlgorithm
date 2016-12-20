@@ -5,10 +5,11 @@
 #ifndef GENETICALGORITHM_DATASET_H
 #define GENETICALGORITHM_DATASET_H
 
+#include <iostream>
 #include <vector>
 #include <stdlib.h>
 #include "Exceptions/DifferentSizesOfVectors.h"
-
+using namespace std;
 template <typename FeaturesType, typename LabelsType>
 class Dataset{
 private:
@@ -48,6 +49,29 @@ public:
 		vectorOfLabels = dataset.getVectorOfLabels();
 		vectorOfIndexes = dataset.getVectorOfIndexes();
 	};
+
+    void getSubsets(double percent_of_subset_for_training_set, double percent_of_subset_for_test_set, Dataset<FeaturesType, LabelsType> &training_set, Dataset<FeaturesType, LabelsType> &test_set)
+    {
+        typename vector<vector<FeaturesType>>::const_iterator first_features = vectorOfFeatures.begin();
+        typename vector<vector<FeaturesType>>::const_iterator last_features = vectorOfFeatures.begin() + (vectorOfFeatures.size() * percent_of_subset_for_training_set);
+        vector<vector<FeaturesType>> newFeatures(first_features, last_features);
+        cout << newFeatures.size() << endl;
+        typename vector<vector<LabelsType>>::const_iterator first_labels = vectorOfLabels.begin();
+        typename vector<vector<LabelsType>>::const_iterator last_labels = vectorOfLabels.begin() + (vectorOfLabels.size() * percent_of_subset_for_training_set);
+        vector<vector<LabelsType>> newLabels(first_labels, last_labels);
+        cout << newLabels.size() << endl;
+        training_set.vectorOfFeatures = newFeatures;
+        training_set.vectorOfLabels = newLabels;
+        typename vector<vector<FeaturesType>>::const_iterator first_features_test = vectorOfFeatures.begin() + (vectorOfFeatures.size() * percent_of_subset_for_training_set);
+        typename vector<vector<FeaturesType>>::const_iterator last_features_test = vectorOfFeatures.begin() + (vectorOfFeatures.size() * percent_of_subset_for_training_set) + (vectorOfFeatures.size() * percent_of_subset_for_test_set);
+        vector<vector<FeaturesType>> newFeatures_test(first_features_test, last_features_test);
+        cout << newFeatures_test.size() << endl;
+        typename vector<vector<LabelsType>>::const_iterator first_labels_test = vectorOfLabels.begin() + (vectorOfLabels.size() * percent_of_subset_for_training_set);
+        typename vector<vector<LabelsType>>::const_iterator last_labels_test = vectorOfLabels.begin() + (vectorOfLabels.size() * percent_of_subset_for_training_set) + (vectorOfLabels.size() * percent_of_subset_for_test_set);
+        vector<vector<LabelsType>>  newLabels_test(first_labels_test, last_labels_test);
+        test_set.vectorOfFeatures = newFeatures_test;
+        test_set.vectorOfFeatures = newLabels_test;
+    };
 
 	const std::vector<std::vector<FeaturesType>> &getVectorOfFeatures() const{
 		return vectorOfFeatures;

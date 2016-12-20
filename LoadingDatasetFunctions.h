@@ -14,9 +14,9 @@
 
 using namespace std;
 
-//Dataset<double, bool> LoadingDatasetFromFile(char *path);
+Dataset<double, double> LoadingDatasetFromFile(const char *path);
 
-void getLabel(const char *memblock, std::vector<bool> &Labels, int loopControl);
+void getLabel(const char *memblock, std::vector<double> &Labels, int loopControl);
 
 void getFirstFeature(const char *memblock, const int FEATUREBYTES, int loopControl, std::vector<double> &Feature,
                      char *featureBuffer, double &feature);
