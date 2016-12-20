@@ -25,9 +25,7 @@ double Individual::getFitnessScore()
 }
 
 void Individual::setFitnessScore(double &accuracy, long sizeOfTrainingSet){
-	double tempSizeOfTrainingSet = sizeOfTrainingSet;
-	double tempSizeOfIndyvidual = sizeOfIndividual;
-	fitnessScore=1-(tempSizeOfIndyvidual/tempSizeOfTrainingSet);
+	fitnessScore = 1 - (sizeOfIndividual/sizeOfTrainingSet);
 }
 
 void crossoverIndividual(double crossoverRatio, Individual &firstIndividual, Individual &secondIndividual){

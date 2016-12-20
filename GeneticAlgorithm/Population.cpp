@@ -61,22 +61,22 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 }
 
 void Population::crossover(double crossoverRatio){
-	std::vector<Indvidual> newVectorOfIndyviduals;
-	Indyvidual firstIndividual;
-	Indyvidual secondIndividual;
+	std::vector<Individual> newVectorOfIndyviduals;
+	Individual firstIndividual;
+	Individual secondIndividual;
 	long randomNumber = 0;
-	while(!vectorOfIndyviduals.empty()){
-		randomNumber = (rand() % vectorOfIndyviduals.size());
-		firstIndividual = vectorOfIndyviduals[randomNumber];
-		vectorOfIndyviduals.erase(vectorOfIndyviduals.begin() + randomNumber);
-		randomNumber = (rand() % (vectorOfIndyviduals.size()));
-		secondIndividual = vectorOfIndyviduals[randomNumber];
-		vectorOfIndyviduals.erase(vectorOfIndyviduals.begin() + (randomNumber));
+	while(!vectorOfIndividuals.empty()){
+		randomNumber = (rand() % vectorOfIndividuals.size());
+		firstIndividual = vectorOfIndividuals[randomNumber];
+		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + randomNumber);
+		randomNumber = (rand() % (vectorOfIndividuals.size()));
+		secondIndividual = vectorOfIndividuals[randomNumber];
+		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + (randomNumber));
 		crossoverIndividual(crossoverRatio, firstIndividual, secondIndividual);
 		newVectorOfIndyviduals.push_back(firstIndividual);
 		newVectorOfIndyviduals.push_back(secondIndividual);
 	}
-	vectorOfIndyviduals = newVectorOfIndyviduals;
+	vectorOfIndividuals = newVectorOfIndyviduals;
 }
 
 void Population::setTopologyForNeuralNet(vector<int> &topology) const{
