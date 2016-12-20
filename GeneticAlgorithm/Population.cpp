@@ -61,7 +61,7 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 }
 
 void Population::crossover(double crossoverRatio){
-	std::vector<Individual> newVectorOfIndyviduals;
+	std::vector<Individual> newVectorOfIndividuals;
 	Individual firstIndividual;
 	Individual secondIndividual;
 	long randomNumber = 0;
@@ -73,10 +73,10 @@ void Population::crossover(double crossoverRatio){
 		secondIndividual = vectorOfIndividuals[randomNumber];
 		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + (randomNumber));
 		crossoverIndividual(crossoverRatio, firstIndividual, secondIndividual);
-		newVectorOfIndyviduals.push_back(firstIndividual);
-		newVectorOfIndyviduals.push_back(secondIndividual);
+		newVectorOfIndividuals.push_back(firstIndividual);
+		newVectorOfIndividuals.push_back(secondIndividual);
 	}
-	vectorOfIndividuals = newVectorOfIndyviduals;
+	vectorOfIndividuals = newVectorOfIndividuals;
 }
 
 void Population::setTopologyForNeuralNet(vector<int> &topology) const{

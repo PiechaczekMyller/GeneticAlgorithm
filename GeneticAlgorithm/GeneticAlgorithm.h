@@ -9,6 +9,7 @@
 #include "Population.h"
 #include "../Dataset.h"
 #include "Settings.h"
+#include <algorithm>
 
 class GeneticAlgorithm{
 private:
