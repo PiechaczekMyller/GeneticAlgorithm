@@ -24,9 +24,8 @@ void GeneticAlgorithm::run(){
 	bool endCondition=false;
 	while(!endCondition){
 		population.checkFitnessScores(testSet,trainingSet.getLength());
-
+		population.crossover(settings.crossoverProbability);
 		endCondition = true;
 	}
-    population.createInitialPopulation(10, trainingSet);
     population.Mutation(0.01, trainingSet);
 }
