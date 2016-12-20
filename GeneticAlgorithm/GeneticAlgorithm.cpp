@@ -31,13 +31,16 @@ void GeneticAlgorithm::run(){
     {
         e.what();
     }
-	Population population;
 	population.createInitialPopulation(settings.populationSize, trainingSet);
-    int no_of_epochs = 0;
-	while(no_of_epochs!=settings.maxNoOfEpochs){
-		population.checkFitnessScores(testSet,trainingSet.getLength());
-//		population.crossover(settings.crossoverProbability);
-        no_of_epochs++;
+    int noOfEpochs = 0;
+	while(noOfEpochs!=settings.maxNoOfEpochs){
+        population.checkFitnessScores(testSet, trainingSet.getLength(), settings.weightForSize, settings.weightForAccuracy);
+        population.setBestFitnessScore();
+        cout << "Generation " << noOfEpochs << " best fitness score: " << population.getBestFitnessScore() << endl;
+        population.SelectionRouletteWheel();
+		population.crossover(settings.crossoverProbability);
+        population.resetBestFitnessScore();
+        noOfEpochs++;
 	}
     population.Mutation(0.01, trainingSet);
 }

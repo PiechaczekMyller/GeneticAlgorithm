@@ -10,9 +10,10 @@ using namespace std;
 
 class Individual{
 private:
-	std::vector<std::vector<double>> featuresVector;
-	std::vector<std::vector<double>> labelsVector;
+	vector<vector<double>> featuresVector;
+	vector<vector<double>> labelsVector;
 	double fitnessScore = 0;
+	double accuracy=0;
 	long sizeOfIndividual;
 public:
 
@@ -20,23 +21,28 @@ public:
 
     void setScore(double newScore);
 
-	Individual(const vector<vector<double>> &featuresVector,
-	           const vector<vector<double>> &labelsVector)
+	Individual(vector<vector<double>> &featuresVector,
+	           vector<vector<double>> &labelsVector)
 			: featuresVector(featuresVector), labelsVector(labelsVector){
 		sizeOfIndividual=labelsVector.size();
 	};
 
-	const vector<vector<double>> &getFeaturesVector() const{
+	vector<vector<double>> &getFeaturesVector(){
 		return featuresVector;
 	}
 
-	const vector<vector<double>> &getLabelsVector() const{
+	void setSizeOfIndividual(){
+		Individual::sizeOfIndividual = featuresVector.size();
+	}
+
+	vector<vector<double>> &getLabelsVector(){
 		return labelsVector;
 	};
 
     double getFitnessScore();
 
-	void setFitnessScore(double &accuracy, long sizeOfTrainingSet);
+	void setFitnessScore(double accuracy, double sizeOfTrainingSet, double weightForSize,
+		                     double weightForAccuracy);
 
     friend void crossoverIndividual(double crossoverRatio, Individual &firstIndividual, Individual &secondIndividual);
 
@@ -45,6 +51,10 @@ public:
     void ChangeFeature(int index, vector<double> new_feature);
 
     void ChangeLabel(int index, vector<double> new_label);
+
+	void setAccuracy(double accuracy){
+		Individual::accuracy = accuracy;
+	}
 };
 
 

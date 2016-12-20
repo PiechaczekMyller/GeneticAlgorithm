@@ -16,11 +16,12 @@
 class Population{
 private:
 	std::vector<Individual> vectorOfIndividuals;
+	double bestFitnessScore=0;
 public:
 
 	Population(){ }
 
-	Population(const std::vector<Individual> &vectorOfIndyviduals) : vectorOfIndividuals(vectorOfIndyviduals){ }
+	Population(const std::vector<Individual> &vectorOfIndividuals) : vectorOfIndividuals(vectorOfIndividuals){ }
 
     void setVectorOfIndividuals(vector<Individual> new_vector);
 
@@ -34,7 +35,8 @@ public:
 	void addBClassExample(const Dataset<double, double> &trainingSet, vector<vector<double>> &randomFeaturesVector,
 	                      vector<vector<double>> &labelsVector) const;
 
-	void checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet);
+	void checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet,
+		                        double weightForSize, double weightForAccuracy);
 
 	void crossover(double crossoverRatio);
 
@@ -49,6 +51,14 @@ public:
 	vector<double> CalculateWheelSegments(double scores_sum);
 
     void Mutation(double mutation_probability, Dataset<double,double> &training_set);
+
+
+	void setBestFitnessScore();
+
+	void resetBestFitnessScore();
+	double getBestFitnessScore() const{
+		return bestFitnessScore;
+	}
 };
 
 #endif //GENETICALGORITHM_POPULATION_H
