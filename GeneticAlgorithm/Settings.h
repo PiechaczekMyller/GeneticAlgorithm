@@ -12,8 +12,8 @@ struct Settings{
 	double mutationProbability = 0.01;
 	double crossoverProbability=0.8;
 	double randomPickProbability = 0.01;
-	double weightForAccuracy=0.8;
-	double weightForSize=0.2;
+	double weightForAccuracy=0.2;
+	double weightForSize=0.8;
 	double timeCondition = 0;
 	double accuracyCondition = 0;
 	double maxNoOfEpochs = 40;

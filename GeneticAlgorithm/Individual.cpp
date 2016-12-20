@@ -9,38 +9,38 @@ void Individual::setScore(double newScore) // needed just for debugging
 	fitnessScore = newScore;
 }
 
-void Individual::ChangeFeature(int index, vector<double> new_feature)
-{
+void Individual::ChangeFeature(int index, vector<double> new_feature){
 	featuresVector[index] = new_feature;
 }
 
-void Individual::ChangeLabel(int index, vector<double> new_label)
-{
+void Individual::ChangeLabel(int index, vector<double> new_label){
 	labelsVector[index] = new_label;
 }
 
-double Individual::getFitnessScore()
-{
+double Individual::getFitnessScore(){
 	return fitnessScore;
 }
 
-void Individual::setFitnessScore(double &accuracy, long sizeOfTrainingSet){
-	fitnessScore = 1 - (sizeOfIndividual/sizeOfTrainingSet);
+void Individual::setFitnessScore(double accuracy, double sizeOfTrainingSet, double weightForSize,
+                                 double weightForAccuracy){
+	double accuracyPart = weightForAccuracy * accuracy;
+	double sizePart = weightForSize * (1.0 - (sizeOfIndividual / sizeOfTrainingSet));
+	fitnessScore = accuracyPart + sizePart;
 }
 
 void crossoverIndividual(double crossoverRatio, Individual &firstIndividual, Individual &secondIndividual){
-	double randomRatio = (rand() % 100)/100;
-	if (randomRatio < crossoverRatio){
+	double randomRatio = (rand() % 100) / 100.0;
+	if(randomRatio < crossoverRatio){
 		std::vector<std::vector<double>> tempVectorOfFeatures;
 		std::vector<std::vector<double>> tempVectorOfLabels;
 		tempVectorOfFeatures = firstIndividual.getFeaturesVector();
 		tempVectorOfFeatures.insert(tempVectorOfFeatures.end(),
-									secondIndividual.getFeaturesVector().begin(),
-									secondIndividual.getFeaturesVector().end());
+		                            secondIndividual.getFeaturesVector().begin(),
+		                            secondIndividual.getFeaturesVector().end());
 		tempVectorOfLabels = firstIndividual.getLabelsVector();
 		tempVectorOfLabels.insert(tempVectorOfLabels.end(),
-								  secondIndividual.getLabelsVector().begin(),
-								  secondIndividual.getLabelsVector().end());
+		                          secondIndividual.getLabelsVector().begin(),
+		                          secondIndividual.getLabelsVector().end());
 		firstIndividual.getFeaturesVector().clear();
 		firstIndividual.getLabelsVector().clear();
 		long int numberOfAClassFeatures = 0;
@@ -70,6 +70,8 @@ void crossoverIndividual(double crossoverRatio, Individual &firstIndividual, Ind
 				firstIndividual.getLabelsVector().push_back(tempVectorOfLabels[randomNumber]);
 				numberOfPickedExamples++;
 			}
+			firstIndividual.setSizeOfIndividual();
+			secondIndividual.setSizeOfIndividual();
 			secondIndividual.getFeaturesVector() = tempVectorOfFeatures;
 			secondIndividual.getLabelsVector() = tempVectorOfLabels;
 		}

@@ -19,15 +19,15 @@ void Population::createInitialPopulation(const int sizeOfPopulation, const Datas
 		std::vector<std::vector<double>> randomFeaturesVector;
 		std::vector<std::vector<double>> labelsVector;
 		const long datasetLength = trainingSet.getVectorOfLabels().size();
-		const long randomLength = (rand() % datasetLength) / 2;
+		const long randomLength = (rand() % datasetLength)/2;
 		for(int loopControl2 = 0; loopControl2 < randomLength; loopControl2 = loopControl2 + 2){
 			addAClassExample(trainingSet, randomFeaturesVector, labelsVector);
 			addBClassExample(trainingSet, randomFeaturesVector, labelsVector);
 		}
-		Individual newIndyvidual(randomFeaturesVector, labelsVector);
-		vectorOfIndividuals.push_back(newIndyvidual);
+		Individual newIndividual(randomFeaturesVector, labelsVector);
+		vectorOfIndividuals.push_back(newIndividual);
 	}
-	std::cout << "Initial population created";
+	std::cout << "Initial population created" << std::endl;
 }
 
 void Population::addBClassExample(const Dataset<double, double> &trainingSet,
@@ -46,17 +46,19 @@ void Population::addAClassExample(const Dataset<double, double> &trainingSet,
 	labelsVector.push_back(trainingSet.getVectorOfLabels()[aClassIndex]);
 }
 
-void Population::checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet){
+void Population::checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet,
+                                    double weightForSize, double weightForAccuracy){
 	vector<int> topology;
 	setTopologyForNeuralNet(topology);
 	double accuracy;
-	for(auto &indyvidual:vectorOfIndividuals){
+	for(auto &individual:vectorOfIndividuals){
 		NeuralNet newNet(topology, 0.9, false);
-		newNet.PartialFit(indyvidual.getFeaturesVector(),
-		                  indyvidual.getLabelsVector(),
-		                  0.01);
+		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01,
+		                  false);
 		accuracy = newNet.CheckAccuracy(testSet);
-		indyvidual.setFitnessScore(accuracy,sizeOfTrainingSet);
+		individual.setAccuracy(accuracy);
+		individual.setFitnessScore(accuracy, sizeOfTrainingSet, weightForSize,weightForAccuracy);
+
 	}
 }
 
@@ -65,7 +67,7 @@ void Population::crossover(double crossoverRatio){
 	Individual firstIndividual;
 	Individual secondIndividual;
 	long randomNumber = 0;
-	while(!vectorOfIndividuals.empty()){
+	while(vectorOfIndividuals.size()>1){
 		randomNumber = (rand() % vectorOfIndividuals.size());
 		firstIndividual = vectorOfIndividuals[randomNumber];
 		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + randomNumber);
@@ -76,7 +78,7 @@ void Population::crossover(double crossoverRatio){
 		newVectorOfIndividuals.push_back(firstIndividual);
 		newVectorOfIndividuals.push_back(secondIndividual);
 	}
-	vectorOfIndividuals = newVectorOfIndividuals;
+	vectorOfIndividuals.insert(vectorOfIndividuals.end(),newVectorOfIndividuals.begin(),newVectorOfIndividuals.end());
 }
 
 void Population::setTopologyForNeuralNet(vector<int> &topology) const{
@@ -161,4 +163,17 @@ void Population::Mutation(double mutation_probability, Dataset<double,double> &t
 			}
 		}
 	}
+}
+
+void Population::setBestFitnessScore(){
+	for(auto & individual:vectorOfIndividuals){
+		if(individual.getFitnessScore() > bestFitnessScore){
+			bestFitnessScore = individual.getFitnessScore();
+
+		}
+	}
+}
+
+void Population::resetBestFitnessScore(){
+	bestFitnessScore=0;
 }

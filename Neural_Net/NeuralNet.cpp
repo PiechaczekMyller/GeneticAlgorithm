@@ -275,7 +275,8 @@ void NeuralNet::Dropout(int layer_to_dropout){
 //    }
 //}
 
-void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy) {
+void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy,
+                           bool echo){
     double error = 100;
     vector<int> indexes;
     const char* path = "errors.txt";
@@ -300,7 +301,9 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
             this->UpdateWeights();
         }
         squared_error = squared_error / data_to_fit.size();
-        cout << "squared error: " << squared_error << endl;
+        if (echo == true){
+            cout << "squared error: " << squared_error << endl;
+        }
         file << squared_error << endl;
         error = squared_error;
     }
