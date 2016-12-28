@@ -44,7 +44,7 @@ public:
 	void setFitnessScore(double accuracy, double sizeOfTrainingSet, double weightForSize,
 		                     double weightForAccuracy);
 
-    friend void crossoverIndividual(double crossoverRatio, Individual &firstIndividual, Individual &secondIndividual);
+    friend void crossoverIndividuals(double crossoverRatio, Individual &firstIndividual, Individual &secondIndividual);
 
 	virtual ~Individual(){ };
 

@@ -4,14 +4,12 @@
 
 #include "Population.h"
 
-void Population::setVectorOfIndividuals(vector<Individual> new_vector)
-{
-    vectorOfIndividuals = new_vector;
+void Population::setVectorOfIndividuals(vector<Individual> new_vector){
+	vectorOfIndividuals = new_vector;
 }
 
-vector<Individual> Population::getVectorOfIndividuals()
-{
-    return vectorOfIndividuals;
+vector<Individual> Population::getVectorOfIndividuals(){
+	return vectorOfIndividuals;
 }
 
 void Population::createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet){
@@ -19,7 +17,7 @@ void Population::createInitialPopulation(const int sizeOfPopulation, const Datas
 		std::vector<std::vector<double>> randomFeaturesVector;
 		std::vector<std::vector<double>> labelsVector;
 		const long datasetLength = trainingSet.getVectorOfLabels().size();
-		const long randomLength = (rand() % datasetLength)/2;
+		const long randomLength = (rand() % datasetLength) / 2;
 		for(int loopControl2 = 0; loopControl2 < randomLength; loopControl2 = loopControl2 + 2){
 			addAClassExample(trainingSet, randomFeaturesVector, labelsVector);
 			addBClassExample(trainingSet, randomFeaturesVector, labelsVector);
@@ -51,13 +49,15 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 	vector<int> topology;
 	setTopologyForNeuralNet(topology);
 	double accuracy;
+	int index=0;
 	for(auto &individual:vectorOfIndividuals){
 		NeuralNet newNet(topology, 0.9, false);
 		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01,
 		                  false);
 		accuracy = newNet.CheckAccuracy(testSet);
 		individual.setAccuracy(accuracy);
-		individual.setFitnessScore(accuracy, sizeOfTrainingSet, weightForSize,weightForAccuracy);
+		individual.setFitnessScore(accuracy, sizeOfTrainingSet, weightForSize, weightForAccuracy);
+		index++;
 
 	}
 }
@@ -67,18 +67,18 @@ void Population::crossover(double crossoverRatio){
 	Individual firstIndividual;
 	Individual secondIndividual;
 	long randomNumber = 0;
-	while(vectorOfIndividuals.size()>1){
+	while(vectorOfIndividuals.size() > 1){
 		randomNumber = (rand() % vectorOfIndividuals.size());
 		firstIndividual = vectorOfIndividuals[randomNumber];
 		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + randomNumber);
 		randomNumber = (rand() % (vectorOfIndividuals.size()));
 		secondIndividual = vectorOfIndividuals[randomNumber];
 		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + (randomNumber));
-		crossoverIndividual(crossoverRatio, firstIndividual, secondIndividual);
+		crossoverIndividuals(crossoverRatio, firstIndividual, secondIndividual);
 		newVectorOfIndividuals.push_back(firstIndividual);
 		newVectorOfIndividuals.push_back(secondIndividual);
 	}
-	vectorOfIndividuals.insert(vectorOfIndividuals.end(),newVectorOfIndividuals.begin(),newVectorOfIndividuals.end());
+	vectorOfIndividuals.insert(vectorOfIndividuals.end(), newVectorOfIndividuals.begin(), newVectorOfIndividuals.end());
 }
 
 void Population::setTopologyForNeuralNet(vector<int> &topology) const{
@@ -87,77 +87,66 @@ void Population::setTopologyForNeuralNet(vector<int> &topology) const{
 	topology.push_back(1);
 }
 
-double Population::CalculateSumOfFitnessScores()
-{
+double Population::CalculateSumOfFitnessScores(){
 	double scores_sum = 0;
-	for(auto &individual : vectorOfIndividuals)
-	{
+	for(auto &individual : vectorOfIndividuals){
 		scores_sum = scores_sum + individual.getFitnessScore();
 	}
 	return scores_sum;
 }
 
-vector<double> Population::CalculateWheelSegments(double scores_sum)
-{
+vector<double> Population::CalculateWheelSegments(double scores_sum){
 	vector<double> wheel_segments;
 	wheel_segments.push_back(0.0);
 	double individual_wheel_portion = 0;
-    double last_element = 0;
-	for (auto &individual : vectorOfIndividuals)
-	{
+	double last_element = 0;
+	for(auto &individual : vectorOfIndividuals){
 		individual_wheel_portion = (individual.getFitnessScore() / scores_sum) * 100;
 		last_element = wheel_segments.back() + individual_wheel_portion;
-        wheel_segments.push_back(last_element);
+		wheel_segments.push_back(last_element);
 	}
 	return wheel_segments;
 }
 
-void Population::SelectionRouletteWheel()
-{
-	vector<int>indexes_of_chosen_individuals;
+void Population::SelectionRouletteWheel(){
+	vector<int> indexes_of_chosen_individuals;
 	double scores_sum = CalculateSumOfFitnessScores();
 	vector<double> wheel_segments = CalculateWheelSegments(scores_sum);
 	int random_number = 0;
-    vector<Individual> new_population;
-    new_population.reserve(vectorOfIndividuals.size());
-    random_device rd;
-	for(int loopControl = 0; loopControl < vectorOfIndividuals.size(); loopControl++)
-	{
+	vector<Individual> new_population;
+	new_population.reserve(vectorOfIndividuals.size());
+	random_device rd;
+	for(int loopControl = 0; loopControl < vectorOfIndividuals.size(); loopControl++){
 		mt19937 rng(rd());
 		uniform_int_distribution<int> uni(0, int(wheel_segments.back()));
 		random_number = uni(rng);
-		for (int wheel_segment = 1; wheel_segment < wheel_segments.size(); wheel_segment++)
-		{
+		for(int wheel_segment = 1; wheel_segment < wheel_segments.size(); wheel_segment++){
 			if(random_number > wheel_segments[wheel_segment - 1] && random_number < wheel_segments[wheel_segment])
 				indexes_of_chosen_individuals.push_back(wheel_segment);
 		}
 	}
-    for (int index = 0; index < indexes_of_chosen_individuals.size(); index++)
-    {
-        Individual new_individual = vectorOfIndividuals[indexes_of_chosen_individuals[index] -  1];
-        new_population.push_back(new_individual);
-    }
-    this->setVectorOfIndividuals(new_population);
+	for(int index = 0; index < indexes_of_chosen_individuals.size(); index++){
+		Individual new_individual = vectorOfIndividuals[indexes_of_chosen_individuals[index] - 1];
+		new_population.push_back(new_individual);
+	}
+	this->setVectorOfIndividuals(new_population);
 }
 
-void Population::Mutation(double mutation_probability, Dataset<double,double> &training_set) {
+void Population::Mutation(double mutation_probability, Dataset<double, double> &training_set){
 	double random_int = 0;
 	double random_feature_and_label = 0;
-    random_device rd;
-	for(auto &individual : this->vectorOfIndividuals)
-	{
-		for (int index = 0; index < individual.getLabelsVector().size(); index++)
-		{
+	random_device rd;
+	for(auto &individual : this->vectorOfIndividuals){
+		for(int index = 0; index < individual.getLabelsVector().size(); index++){
 			mt19937 mt(rd());
 			uniform_int_distribution<int> uni(0, 100);
 			random_int = uni(mt);
-            cout << random_int << endl;
-			if (random_int < (mutation_probability * 100))
-			{
-                mt19937 rng(rd());
+			cout << random_int << endl;
+			if(random_int < (mutation_probability * 100)){
+				mt19937 rng(rd());
 				uniform_int_distribution<int> unif(0, int(training_set.getVectorOfLabels().size()));
 				random_feature_and_label = unif(rng);
-                cout << random_feature_and_label << endl;
+				cout << random_feature_and_label << endl;
 				individual.ChangeFeature(index, training_set.getVectorOfFeatures()[random_feature_and_label]);
 				individual.ChangeLabel(index, training_set.getVectorOfLabels()[random_feature_and_label]);
 			}
@@ -166,7 +155,7 @@ void Population::Mutation(double mutation_probability, Dataset<double,double> &t
 }
 
 void Population::setBestFitnessScore(){
-	for(auto & individual:vectorOfIndividuals){
+	for(auto &individual:vectorOfIndividuals){
 		if(individual.getFitnessScore() > bestFitnessScore){
 			bestFitnessScore = individual.getFitnessScore();
 
@@ -175,5 +164,5 @@ void Population::setBestFitnessScore(){
 }
 
 void Population::resetBestFitnessScore(){
-	bestFitnessScore=0;
+	bestFitnessScore = 0;
 }
