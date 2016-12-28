@@ -2,8 +2,6 @@
 // Created by user on 2016-11-06.
 //
 
-#include <fstream>
-#include <cmath>
 #include "NeuralNet.h"
 const int InputAndOutputLayers = 2;
 

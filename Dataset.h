@@ -8,6 +8,8 @@
 #include <iostream>
 #include <vector>
 #include <stdlib.h>
+#include <random>
+#include <algorithm>
 #include "Exceptions/DifferentSizesOfVectors.h"
 using namespace std;
 template <typename FeaturesType, typename LabelsType>
@@ -52,25 +54,55 @@ public:
 
     void getSubsets(double percent_of_subset_for_training_set, double percent_of_subset_for_test_set, Dataset<FeaturesType, LabelsType> &training_set, Dataset<FeaturesType, LabelsType> &test_set)
     {
-        typename vector<vector<FeaturesType>>::const_iterator first_features = vectorOfFeatures.begin();
-        typename vector<vector<FeaturesType>>::const_iterator last_features = vectorOfFeatures.begin() + (vectorOfFeatures.size() * percent_of_subset_for_training_set);
-        vector<vector<FeaturesType>> newFeatures(first_features, last_features);
-        cout << newFeatures.size() << endl;
-        typename vector<vector<LabelsType>>::const_iterator first_labels = vectorOfLabels.begin();
-        typename vector<vector<LabelsType>>::const_iterator last_labels = vectorOfLabels.begin() + (vectorOfLabels.size() * percent_of_subset_for_training_set);
-        vector<vector<LabelsType>> newLabels(first_labels, last_labels);
-        cout << newLabels.size() << endl;
-        training_set.vectorOfFeatures = newFeatures;
-        training_set.vectorOfLabels = newLabels;
-        typename vector<vector<FeaturesType>>::const_iterator first_features_test = vectorOfFeatures.begin() + (vectorOfFeatures.size() * percent_of_subset_for_training_set);
-        typename vector<vector<FeaturesType>>::const_iterator last_features_test = vectorOfFeatures.begin() + (vectorOfFeatures.size() * percent_of_subset_for_training_set) + (vectorOfFeatures.size() * percent_of_subset_for_test_set);
-        vector<vector<FeaturesType>> newFeatures_test(first_features_test, last_features_test);
-        cout << newFeatures_test.size() << endl;
-        typename vector<vector<LabelsType>>::const_iterator first_labels_test = vectorOfLabels.begin() + (vectorOfLabels.size() * percent_of_subset_for_training_set);
-        typename vector<vector<LabelsType>>::const_iterator last_labels_test = vectorOfLabels.begin() + (vectorOfLabels.size() * percent_of_subset_for_training_set) + (vectorOfLabels.size() * percent_of_subset_for_test_set);
-        vector<vector<LabelsType>>  newLabels_test(first_labels_test, last_labels_test);
-        test_set.vectorOfFeatures = newFeatures_test;
-        test_set.vectorOfFeatures = newLabels_test;
+        long loop_control = 0;
+        long a_class_index = 0;
+        long b_class_index = 0;
+        vector<vector<double>> random_features;
+        vector<vector<double>> random_labels;
+        vector<long> chosen_indexes;
+        random_device rd;
+        mt19937 rng(rd());
+        uniform_int_distribution<long> a_class(this->vectorOfIndexes[0].front(), this->vectorOfIndexes[0].size());
+        uniform_int_distribution<long> b_class(this->vectorOfIndexes[1].front(), this->vectorOfIndexes[1].size());
+        while (loop_control < (this->vectorOfLabels.size() * percent_of_subset_for_training_set)/ 2)
+        {
+            a_class_index = this->vectorOfIndexes[0][a_class(rng)];
+            b_class_index = this->vectorOfIndexes[1][b_class(rng)];
+            if (find(chosen_indexes.begin(), chosen_indexes.end(), a_class_index) == chosen_indexes.end() && find(chosen_indexes.begin(), chosen_indexes.end(), b_class_index) == chosen_indexes.end()) {
+                random_features.push_back(this->getVectorOfFeatures()[a_class_index]);
+                random_labels.push_back(this->getVectorOfLabels()[a_class_index]);
+                random_features.push_back(this->getVectorOfFeatures()[b_class_index]);
+                random_labels.push_back(this->getVectorOfLabels()[b_class_index]);
+                chosen_indexes.push_back(a_class_index);
+                chosen_indexes.push_back(b_class_index);
+                loop_control++;
+            }
+        }
+        training_set.vectorOfFeatures = random_features;
+        training_set.vectorOfLabels = random_labels;
+        random_features.clear();
+        random_features.clear();
+        loop_control = 0;
+        while (loop_control < (this->getVectorOfLabels().size() * percent_of_subset_for_test_set) / 2)
+        {
+            a_class_index = this->vectorOfIndexes[0][a_class(rng)];
+            b_class_index = this->vectorOfIndexes[1][b_class(rng)];
+            if (find(chosen_indexes.begin(), chosen_indexes.end(), a_class_index)== chosen_indexes.end() && find(chosen_indexes.begin(), chosen_indexes.end(), b_class_index)== chosen_indexes.end()) {
+                random_features.push_back(this->getVectorOfFeatures()[a_class_index]);
+                random_labels.push_back(this->getVectorOfLabels()[a_class_index]);
+                random_features.push_back(this->getVectorOfFeatures()[b_class_index]);
+                random_labels.push_back(this->getVectorOfLabels()[b_class_index]);
+                chosen_indexes.push_back(a_class_index);
+                chosen_indexes.push_back(b_class_index);
+                loop_control++;
+            }
+        }
+        test_set.vectorOfFeatures = random_features;
+        test_set.vectorOfLabels = random_labels;
+        cout << test_set.vectorOfFeatures.size() << endl;
+        cout << "Subsets created" << endl;
+        cout << "Size of training set: " << training_set.vectorOfLabels.size() << endl;
+        cout << "Size of test set: " << test_set.vectorOfLabels.size() << endl;
     };
 
 	const std::vector<std::vector<FeaturesType>> &getVectorOfFeatures() const{

@@ -14,6 +14,8 @@
 #include <ctime>
 #include <random>
 #include <algorithm>
+#include <fstream>
+#include <cmath>
 using namespace std;
 
 class NeuralNet {
