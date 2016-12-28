@@ -3,6 +3,8 @@
 //
 #include "Individual.h"
 #include <iostream>
+#include <algorithm>
+#include <tuple>
 
 void Individual::setScore(double newScore) // needed just for debugging
 {
@@ -28,53 +30,60 @@ void Individual::setFitnessScore(double accuracy, double sizeOfTrainingSet, doub
 	fitnessScore = accuracyPart + sizePart;
 }
 
-void crossoverIndividual(double crossoverRatio, Individual &firstIndividual, Individual &secondIndividual){
-	double randomRatio = (rand() % 100) / 100.0;
-	if(randomRatio < crossoverRatio){
-		std::vector<std::vector<double>> tempVectorOfFeatures;
-		std::vector<std::vector<double>> tempVectorOfLabels;
-		tempVectorOfFeatures = firstIndividual.getFeaturesVector();
-		tempVectorOfFeatures.insert(tempVectorOfFeatures.end(),
-		                            secondIndividual.getFeaturesVector().begin(),
-		                            secondIndividual.getFeaturesVector().end());
-		tempVectorOfLabels = firstIndividual.getLabelsVector();
-		tempVectorOfLabels.insert(tempVectorOfLabels.end(),
-		                          secondIndividual.getLabelsVector().begin(),
-		                          secondIndividual.getLabelsVector().end());
+void crossoverIndividuals(double crossoverRatio, Individual &firstIndividual, Individual &secondIndividual){
+	double randomNumber = (rand()%100)/100.0;
+	if (randomNumber < crossoverRatio){
+		std::vector<std::vector<double>> aClassFeatures;
+		std::vector<std::vector<double>> bClassFeatures;
+		long index=0;
+		for(auto &label:firstIndividual.getLabelsVector()){
+			if(label[0]==1){
+				aClassFeatures.push_back(firstIndividual.getFeaturesVector()[index]);
+			}
+			if(label[0]==0){
+				bClassFeatures.push_back(firstIndividual.getFeaturesVector()[index]);
+			}
+			index++;
+		}
+		index = 0;
+		for(auto &label:secondIndividual.getLabelsVector()){
+			if(label[0]==1){
+				aClassFeatures.push_back(secondIndividual.getFeaturesVector()[index]);
+			}
+			if(label[0]==0){
+				bClassFeatures.push_back(secondIndividual.getFeaturesVector()[index]);
+			}
+			index++;
+		}
+		random_shuffle(aClassFeatures.begin(),aClassFeatures.end());
+		random_shuffle(bClassFeatures.begin(),bClassFeatures.end());
+
 		firstIndividual.getFeaturesVector().clear();
 		firstIndividual.getLabelsVector().clear();
-		long int numberOfAClassFeatures = 0;
-		long int numberOfBClassFeatures = 0;
-		for(auto &label: tempVectorOfLabels){
-			if(label[0] == 1){
-				numberOfAClassFeatures++;
-			}
-			if(label[0] == 0){
-				numberOfBClassFeatures++;
-			}
-		}
-		long int numberOfPickedExamples = 0;
-		while(numberOfPickedExamples <= numberOfAClassFeatures / 2){
-			long randomNumber = (rand() % tempVectorOfFeatures.size());
-			if(tempVectorOfLabels[randomNumber][0] == 1){
-				firstIndividual.getFeaturesVector().push_back(tempVectorOfFeatures[randomNumber]);
-				firstIndividual.getLabelsVector().push_back(tempVectorOfLabels[randomNumber]);
-				numberOfPickedExamples++;
-			}
-		}
-		numberOfPickedExamples = 0;
-		while(numberOfPickedExamples <= numberOfBClassFeatures / 2){
-			long randomNumber = (rand() % tempVectorOfLabels.size());
-			if(tempVectorOfLabels[randomNumber][0] == 0){
-				firstIndividual.getFeaturesVector().push_back(tempVectorOfFeatures[randomNumber]);
-				firstIndividual.getLabelsVector().push_back(tempVectorOfLabels[randomNumber]);
-				numberOfPickedExamples++;
-			}
-			firstIndividual.setSizeOfIndividual();
-			secondIndividual.setSizeOfIndividual();
-			secondIndividual.getFeaturesVector() = tempVectorOfFeatures;
-			secondIndividual.getLabelsVector() = tempVectorOfLabels;
-		}
-	}
+		secondIndividual.getFeaturesVector().clear();
+		secondIndividual.getLabelsVector().clear();
 
+		std::vector<double> one;
+		one.push_back(1.0);
+		std::vector<double> zero;
+		zero.push_back(0.0);
+
+		index = 0;
+		while(index < aClassFeatures.size()/2){
+			firstIndividual.getFeaturesVector().push_back(aClassFeatures[index]);
+			firstIndividual.getLabelsVector().push_back(one);
+			firstIndividual.getFeaturesVector().push_back(bClassFeatures[index]);
+			firstIndividual.getLabelsVector().push_back(zero);
+			index++;
+		}
+		firstIndividual.setSizeOfIndividual();
+		while(index < aClassFeatures.size()){
+			secondIndividual.getFeaturesVector().push_back(aClassFeatures[index]);
+			secondIndividual.getLabelsVector().push_back(one);
+			secondIndividual.getFeaturesVector().push_back(bClassFeatures[index]);
+			secondIndividual.getLabelsVector().push_back(zero);
+			index++;
+		}
+		secondIndividual.setSizeOfIndividual();
+	}
 }
