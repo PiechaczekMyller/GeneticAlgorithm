@@ -12,20 +12,21 @@
 #include "Individual.h"
 #include "../Dataset.h"
 #include "../Neural_Net/NeuralNet.h"
+#include "Settings.h"
 
 class Population{
 private:
 	std::vector<Individual> vectorOfIndividuals;
-	double bestFitnessScore=0;
+	double bestFitnessScore = 0;
 public:
 
 	Population(){ }
 
 	Population(const std::vector<Individual> &vectorOfIndividuals) : vectorOfIndividuals(vectorOfIndividuals){ }
 
-    void setVectorOfIndividuals(vector<Individual> new_vector);
+	void setVectorOfIndividuals(vector<Individual> new_vector);
 
-    vector<Individual> getVectorOfIndividuals();
+	vector<Individual> getVectorOfIndividuals();
 
 	void createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet);
 
@@ -35,14 +36,12 @@ public:
 	void addBClassExample(const Dataset<double, double> &trainingSet, vector<vector<double>> &randomFeaturesVector,
 	                      vector<vector<double>> &labelsVector) const;
 
-	void checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet,
-		                        double weightForSize, double weightForAccuracy);
+	void checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet, Settings settings);
 
 	void crossover(double crossoverRatio);
 
 	virtual ~Population(){ };
 
-	void setTopologyForNeuralNet(vector<int> &topology) const;
 
 	void SelectionRouletteWheel();
 
@@ -50,12 +49,13 @@ public:
 
 	vector<double> CalculateWheelSegments(double scores_sum);
 
-    void Mutation(double mutation_probability, Dataset<double,double> &training_set);
+	void Mutation(double mutation_probability, Dataset<double, double> &training_set);
 
 
 	void setBestFitnessScore();
 
 	void resetBestFitnessScore();
+
 	double getBestFitnessScore() const{
 		return bestFitnessScore;
 	}

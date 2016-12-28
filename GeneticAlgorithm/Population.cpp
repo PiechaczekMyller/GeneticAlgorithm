@@ -3,6 +3,7 @@
 //
 
 #include "Population.h"
+#include "Settings.h"
 
 void Population::setVectorOfIndividuals(vector<Individual> new_vector){
 	vectorOfIndividuals = new_vector;
@@ -44,19 +45,16 @@ void Population::addAClassExample(const Dataset<double, double> &trainingSet,
 	labelsVector.push_back(trainingSet.getVectorOfLabels()[aClassIndex]);
 }
 
-void Population::checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet,
-                                    double weightForSize, double weightForAccuracy){
-	vector<int> topology;
-	setTopologyForNeuralNet(topology);
+void Population::checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet, Settings settings){
 	double accuracy;
 	int index=0;
 	for(auto &individual:vectorOfIndividuals){
-		NeuralNet newNet(topology, 0.9, false);
-		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01,
+		NeuralNet newNet(settings.topology, 0.6, false);
+		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), settings.learningRate,
 		                  false);
 		accuracy = newNet.CheckAccuracy(testSet);
 		individual.setAccuracy(accuracy);
-		individual.setFitnessScore(accuracy, sizeOfTrainingSet, weightForSize, weightForAccuracy);
+		individual.setFitnessScore(accuracy, sizeOfTrainingSet, settings.weightForSize, settings.weightForAccuracy);
 		index++;
 
 	}
@@ -81,11 +79,6 @@ void Population::crossover(double crossoverRatio){
 	vectorOfIndividuals.insert(vectorOfIndividuals.end(), newVectorOfIndividuals.begin(), newVectorOfIndividuals.end());
 }
 
-void Population::setTopologyForNeuralNet(vector<int> &topology) const{
-	topology.push_back(26);
-	topology.push_back(50);
-	topology.push_back(1);
-}
 
 double Population::CalculateSumOfFitnessScores(){
 	double scores_sum = 0;
@@ -141,12 +134,10 @@ void Population::Mutation(double mutation_probability, Dataset<double, double> &
 			mt19937 mt(rd());
 			uniform_int_distribution<int> uni(0, 100);
 			random_int = uni(mt);
-			cout << random_int << endl;
 			if(random_int < (mutation_probability * 100)){
 				mt19937 rng(rd());
 				uniform_int_distribution<int> unif(0, int(training_set.getVectorOfLabels().size()));
 				random_feature_and_label = unif(rng);
-				cout << random_feature_and_label << endl;
 				individual.ChangeFeature(index, training_set.getVectorOfFeatures()[random_feature_and_label]);
 				individual.ChangeLabel(index, training_set.getVectorOfLabels()[random_feature_and_label]);
 			}

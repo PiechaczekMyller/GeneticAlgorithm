@@ -29,10 +29,15 @@ public:
 		else{
 			vectorOfFeatures = vectorOfFeaturesToLoad;
 			vectorOfLabels = vectorOfLabelsToLoad;
-			long index = 0;
-			std::vector<long> aClassIndexes;
-			std::vector<long> bClassIndexes;
-			for(const auto &label:vectorOfLabels){
+			setVectorOfIndexes();
+		}
+	}
+
+	void setVectorOfIndexes(){
+		long index = 0;
+		vector<long> aClassIndexes;
+		vector<long> bClassIndexes;
+		for(const auto &label:vectorOfLabels){
 				if(label[0] == 0){
 					aClassIndexes.push_back(index);
 				}
@@ -41,9 +46,8 @@ public:
 				}
 				index++;
 			}
-			vectorOfIndexes.push_back(aClassIndexes);
-			vectorOfIndexes.push_back(bClassIndexes);
-		}
+		vectorOfIndexes.push_back(aClassIndexes);
+		vectorOfIndexes.push_back(bClassIndexes);
 	};
 
 	Dataset(const Dataset &dataset){
@@ -80,6 +84,7 @@ public:
         }
         training_set.vectorOfFeatures = random_features;
         training_set.vectorOfLabels = random_labels;
+	    training_set.setVectorOfIndexes();
         random_features.clear();
         random_labels.clear();
         loop_control = 0;
@@ -99,6 +104,7 @@ public:
         }
         test_set.vectorOfFeatures = random_features;
         test_set.vectorOfLabels = random_labels;
+	    test_set.setVectorOfIndexes();
         cout << "Subsets created" << endl;
         cout << "Size of training set: " << training_set.vectorOfLabels.size() << endl;
         cout << "Size of test set: " << test_set.vectorOfLabels.size() << endl;
