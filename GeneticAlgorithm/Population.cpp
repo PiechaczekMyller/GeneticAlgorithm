@@ -15,18 +15,22 @@ vector<Individual> Population::getVectorOfIndividuals(){
 
 void Population::createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet){
 	for(int loopControl = 0; loopControl < sizeOfPopulation; loopControl++){
-		std::vector<std::vector<double>> randomFeaturesVector;
-		std::vector<std::vector<double>> labelsVector;
-		const long datasetLength = trainingSet.getVectorOfLabels().size();
-		const long randomLength = (rand() % datasetLength) / 2;
-		for(int loopControl2 = 0; loopControl2 < randomLength; loopControl2 = loopControl2 + 2){
+		createRandomIndividual(trainingSet);
+	}
+	std::cout << "Initial population created" << std::endl;
+}
+
+void Population::createRandomIndividual(const Dataset<double, double> &trainingSet){
+	vector<vector<double>> randomFeaturesVector;
+	vector<vector<double>> labelsVector;
+	const long datasetLength = trainingSet.getVectorOfLabels().size();
+	const long randomLength = (rand() % datasetLength) / 2;
+	for(int loopControl2 = 0; loopControl2 < randomLength; loopControl2 = loopControl2 + 2){
 			addAClassExample(trainingSet, randomFeaturesVector, labelsVector);
 			addBClassExample(trainingSet, randomFeaturesVector, labelsVector);
 		}
-		Individual newIndividual(randomFeaturesVector, labelsVector);
-		vectorOfIndividuals.push_back(newIndividual);
-	}
-	std::cout << "Initial population created" << std::endl;
+	Individual newIndividual(randomFeaturesVector, labelsVector);
+	vectorOfIndividuals.push_back(newIndividual);
 }
 
 void Population::addBClassExample(const Dataset<double, double> &trainingSet,
@@ -47,7 +51,7 @@ void Population::addAClassExample(const Dataset<double, double> &trainingSet,
 
 void Population::checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet, Settings settings){
 	double accuracy;
-	int index=0;
+	int index = 0;
 	for(auto &individual:vectorOfIndividuals){
 		NeuralNet newNet(settings.topology, 0.6, false);
 		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), settings.learningRate,
@@ -156,4 +160,14 @@ void Population::setBestFitnessScore(){
 
 void Population::resetBestFitnessScore(){
 	bestFitnessScore = 0;
+}
+
+void Population::compensate(Dataset<double, double> &training_set, Settings settings){
+	long difference = settings.populationSize - this->getVectorOfIndividuals().size();
+	if(difference > 0){
+		while(difference > 0){
+			this->createRandomIndividual(training_set);
+			difference = -1;
+		}
+	}
 }
