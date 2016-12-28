@@ -81,7 +81,7 @@ public:
         training_set.vectorOfFeatures = random_features;
         training_set.vectorOfLabels = random_labels;
         random_features.clear();
-        random_features.clear();
+        random_labels.clear();
         loop_control = 0;
         while (loop_control < (this->getVectorOfLabels().size() * percent_of_subset_for_test_set) / 2)
         {
@@ -99,7 +99,6 @@ public:
         }
         test_set.vectorOfFeatures = random_features;
         test_set.vectorOfLabels = random_labels;
-        cout << test_set.vectorOfFeatures.size() << endl;
         cout << "Subsets created" << endl;
         cout << "Size of training set: " << training_set.vectorOfLabels.size() << endl;
         cout << "Size of test set: " << test_set.vectorOfLabels.size() << endl;
