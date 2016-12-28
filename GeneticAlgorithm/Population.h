@@ -59,6 +59,9 @@ public:
 	double getBestFitnessScore() const{
 		return bestFitnessScore;
 	}
+	void compensate(Dataset<double, double> &training_set, Settings settings);
+
+	void createRandomIndividual(const Dataset<double, double> &trainingSet);
 };
 
 #endif //GENETICALGORITHM_POPULATION_H

@@ -41,6 +41,7 @@ void GeneticAlgorithm::run(){
 		population.SelectionRouletteWheel();
 		population.crossover(settings.crossoverProbability);
 		population.Mutation(settings.mutationProbability,trainingSet);
+		population.compensate(trainingSet,settings);
 		population.resetBestFitnessScore();
 		noOfEpochs++;
 	}
