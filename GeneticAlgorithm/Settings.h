@@ -9,17 +9,18 @@
 
 struct Settings{
 	int populationSize = 40;
-	double mutationProbability = 0;
+	double mutationProbability = 0.01;
 	double crossoverProbability=0.8;
 	double randomPickProbability = 0.01;
-	double weightForAccuracy=0.2;
-	double weightForSize=0.8;
+	double weightForAccuracy=1.0;
+	double weightForSize=0.0;
 	double timeCondition = 0;
 	double accuracyCondition = 0;
-	double maxNoOfEpochs = 40;
+	double maxNoOfEpochs = 100;
 	string selectionMethod = "RouletteWheel";
     string crossoverMethod = "crossoverMethod";
 	vector<int> topology = {3,6,1};
 	double learningRate = 0.8;
+	bool twoDescendants = false;
 };
 #endif //GENETICALGORITHM_SETTINGS_H
