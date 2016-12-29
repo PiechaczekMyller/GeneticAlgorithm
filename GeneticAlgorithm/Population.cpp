@@ -54,7 +54,7 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 	int index = 0;
 	for(auto &individual:vectorOfIndividuals){
 		NeuralNet newNet(settings.topology, settings.learningRate, false);
-		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01, 0.00001,
+		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01, 0.01,
 		                  true);
 		accuracy = newNet.CheckAccuracy(testSet);
 		individual.setAccuracy(accuracy);
@@ -139,9 +139,9 @@ void Population::Mutation(double mutation_probability, Dataset<double, double> &
     mt19937 mt(rd());
     uniform_int_distribution<int> uni(0, 100);
     mt19937 rng(rd());
-    uniform_int_distribution<int> unif(0, int(training_set.getVectorOfLabels().size()));
+    uniform_int_distribution<long> unif(0, int(training_set.getVectorOfLabels().size()));
 	for(auto &individual : this->vectorOfIndividuals){
-		for(int index = 0; index < individual.getLabelsVector().size(); index++){
+		for(int index = 0; index < individual.getSizeOfIndividual(); index++){
 			random_int = uni(mt);
 			if(random_int < (mutation_probability * 100)){
 				random_feature_and_label = unif(rng);

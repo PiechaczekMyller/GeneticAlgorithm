@@ -31,6 +31,8 @@ public:
 		return featuresVector;
 	}
 
+	long getSizeOfIndividual();
+
 	void setSizeOfIndividual(){
 		Individual::sizeOfIndividual = featuresVector.size();
 	}

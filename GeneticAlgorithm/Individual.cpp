@@ -11,6 +11,10 @@ void Individual::setScore(double newScore) // needed just for debugging
 	fitnessScore = newScore;
 }
 
+long Individual::getSizeOfIndividual() {
+	return sizeOfIndividual;
+};
+
 void Individual::ChangeFeature(int index, vector<double> new_feature){
 	featuresVector[index] = new_feature;
 }
@@ -68,21 +72,29 @@ void crossoverIndividuals(double crossoverRatio, Individual &firstIndividual, In
 		std::vector<double> zero;
 		zero.push_back(0.0);
 
-		index = 0;
-		while(index < aClassFeatures.size()/2){
-			firstIndividual.getFeaturesVector().push_back(aClassFeatures[index]);
+		long index_a = 0;
+		long index_b = 0;
+		while(index_a < aClassFeatures.size()/2) {
+			firstIndividual.getFeaturesVector().push_back(aClassFeatures[index_a]);
 			firstIndividual.getLabelsVector().push_back(one);
-			firstIndividual.getFeaturesVector().push_back(bClassFeatures[index]);
+			index_a++;
+		}
+		while (index_b < bClassFeatures.size()/2) {
+			firstIndividual.getFeaturesVector().push_back(bClassFeatures[index_b]);
 			firstIndividual.getLabelsVector().push_back(zero);
-			index++;
+			index_b++;
 		}
 		firstIndividual.setSizeOfIndividual();
-		while(index < aClassFeatures.size()){
-			secondIndividual.getFeaturesVector().push_back(aClassFeatures[index]);
+		while(index_a < aClassFeatures.size()) {
+			secondIndividual.getFeaturesVector().push_back(aClassFeatures[index_a]);
 			secondIndividual.getLabelsVector().push_back(one);
-			secondIndividual.getFeaturesVector().push_back(bClassFeatures[index]);
+			index_a++;
+		}
+		while (index_b < bClassFeatures.size())
+		{
+			secondIndividual.getFeaturesVector().push_back(bClassFeatures[index_b]);
 			secondIndividual.getLabelsVector().push_back(zero);
-			index++;
+			index_b++;
 		}
 		secondIndividual.setSizeOfIndividual();
 	}
