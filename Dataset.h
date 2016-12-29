@@ -10,14 +10,21 @@
 #include <stdlib.h>
 #include <random>
 #include <algorithm>
+#include <math.h>
 #include "Exceptions/DifferentSizesOfVectors.h"
+
 using namespace std;
+
 template <typename FeaturesType, typename LabelsType>
 class Dataset{
 private:
 	std::vector<std::vector<FeaturesType>> vectorOfFeatures;
 	std::vector<std::vector<LabelsType>> vectorOfLabels;
 	std::vector<std::vector<long>> vectorOfIndexes;
+	std::vector<double> vectorOfMeanValues;
+	std::vector<double> vectorOfMaxValues;
+	std::vector<double> vectorOfMinValues;
+	std::vector<double> vectorOfStds;
 public:
 	Dataset(){ };
 
@@ -38,14 +45,14 @@ public:
 		vector<long> aClassIndexes;
 		vector<long> bClassIndexes;
 		for(const auto &label:vectorOfLabels){
-				if(label[0] == 0){
-					aClassIndexes.push_back(index);
-				}
-				if(label[0] == 1){
-					bClassIndexes.push_back(index);
-				}
-				index++;
+			if(label[0] == 0){
+				aClassIndexes.push_back(index);
 			}
+			if(label[0] == 1){
+				bClassIndexes.push_back(index);
+			}
+			index++;
+		}
 		vectorOfIndexes.push_back(aClassIndexes);
 		vectorOfIndexes.push_back(bClassIndexes);
 	};
@@ -55,6 +62,162 @@ public:
 		vectorOfLabels = dataset.getVectorOfLabels();
 		vectorOfIndexes = dataset.getVectorOfIndexes();
 	};
+
+	void meanRangeValueNormalization(){
+		setDataForNormalization();
+		for(auto &example : this->vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				double featureNorm =
+						(feature - vectorOfMeanValues[index]) / (vectorOfMaxValues[index] - vectorOfMinValues[index]);
+				feature = featureNorm;
+				index++;
+			}
+		}
+	}
+
+	void maxValueNormalization(){
+		setDataForNormalization();
+		for(auto &example : this->vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				double featureNorm = (feature / vectorOfMaxValues[index]);
+				feature = featureNorm;
+				index++;
+			}
+		}
+	}
+
+	void minValueNormalization(){
+		setDataForNormalization();
+		for(auto &example : this->vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				double featureNorm = (feature / vectorOfMinValues[index]);
+				feature = featureNorm;
+				index++;
+			}
+		}
+	}
+
+	void meanDeviationNormalization(){
+		setDataForNormalization();
+		cout << vectorOfMeanValues[1];
+		for(auto &example : this->vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				double featureNorm = (feature - vectorOfMeanValues[index]) / vectorOfMeanValues[index];
+				cout << vectorOfMeanValues[index];
+				feature = featureNorm;
+				index++;
+			}
+		}
+	}
+
+	void minValueDeviationNormalization(){
+		setDataForNormalization();
+		for(auto &example : this->vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				double featureNorm = (feature - vectorOfMinValues[index]) / vectorOfMinValues[index];
+				feature = featureNorm;
+				index++;
+			}
+		}
+	}
+
+	void standardization(){
+		setDataForNormalization();
+		for(auto &example : this->vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				double featureNorm = (feature - vectorOfMeanValues[index]) / vectorOfStds[index];
+				feature = featureNorm;
+				index++;
+			}
+		}
+	}
+
+	void setVectorOfMeanValues(){
+		vector<long> vectorOfSums;
+		for(auto &feature : getVectorOfFeatures()[0]){
+			vectorOfSums.push_back(0);
+		}
+		for(auto &example : vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				vectorOfSums[index] = vectorOfSums[index] + feature;
+				index++;
+			}
+		}
+		for(auto &sum : vectorOfSums){
+			vectorOfMeanValues.push_back(sum / getLength());
+		}
+	};
+
+	void setVectorOfMaxValues(){
+		for(auto &feature : getVectorOfFeatures()[0]){
+			vectorOfMaxValues.push_back(0);
+		}
+		for(auto &example : vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				if(feature > vectorOfMaxValues[index]){
+					vectorOfMaxValues[index] = feature;
+				}
+				index++;
+			}
+		}
+	}
+
+	void setVectorOfMinValues(){
+		for(auto &feature : getVectorOfFeatures()[0]){
+			vectorOfMinValues.push_back(feature);
+		}
+		for(auto &example : vectorOfFeatures){
+			int index = 0;
+			for(auto &feature : example){
+				if(feature < vectorOfMinValues[index]){
+					vectorOfMinValues[index] = feature;
+				}
+				index++;
+			}
+		}
+	}
+
+	void setVectorOfStds(){
+		if(vectorOfMeanValues.empty()){
+			setVectorOfMeanValues();
+		}
+		for(auto &feature : getVectorOfFeatures()[0]){
+			vectorOfStds.push_back(feature);
+		}
+		int index = 0;
+		vector<double> vectorOfSums;
+		for(auto &feature : getVectorOfFeatures()[0]){
+			vectorOfSums.push_back(0);
+		}
+		for(auto &example : vectorOfFeatures){
+			index = 0;
+			for(auto &feature : example){
+				vectorOfSums[index] = vectorOfSums[index] + (feature - vectorOfMeanValues[index]);
+				index++;
+			}
+		}
+		index = 0;
+		for(auto &std:vectorOfStds){
+			double multiplier = 1.0 / this->getLength();
+			std = sqrt((multiplier * vectorOfSums[index]));
+			index++;
+		}
+	}
+
+	void setDataForNormalization(){
+		setVectorOfMinValues();
+		setVectorOfMaxValues();
+		setVectorOfMeanValues();
+		setVectorOfStds();
+	}
 
 //    void getSubsets(double percent_of_subset_for_training_set, double percent_of_subset_for_test_set, Dataset<FeaturesType, LabelsType> &training_set, Dataset<FeaturesType, LabelsType> &test_set)
 //    {
@@ -155,6 +318,7 @@ public:
         cout << "Training set size: " << training_set.vectorOfLabels.size() << endl;
         cout << "Test set size: " << test_set.vectorOfLabels.size() << endl;
     };
+    
 	const std::vector<std::vector<FeaturesType>> &getVectorOfFeatures() const{
 		return vectorOfFeatures;
 	};
@@ -184,7 +348,39 @@ public:
 
 	virtual ~Dataset(){ };
 
+	const vector<double> &getVectorOfMeanValues() const{
+		return vectorOfMeanValues;
+	}
+
+	void setVectorOfMeanValues(const vector<double> &vectorOfMeanValues){
+		Dataset::vectorOfMeanValues = vectorOfMeanValues;
+	}
+
+	const vector<double> &getVectorOfMaxValues() const{
+		return vectorOfMaxValues;
+	}
+
+	void setVectorOfMaxValues(const vector<double> &vectorOfMaxValues){
+		Dataset::vectorOfMaxValues = vectorOfMaxValues;
+	}
+
+	const vector<double> &getVectorOfMinValues() const{
+		return vectorOfMinValues;
+	}
+
+	void setVectorOfMinValues(const vector<double> &vectorOfMinValues){
+		Dataset::vectorOfMinValues = vectorOfMinValues;
+	}
+
+	const vector<double> &getVectorOfStds() const{
+		return vectorOfStds;
+	}
+
+	void setVectorOfStds(const vector<double> &vectorOfStds){
+		Dataset::vectorOfStds = vectorOfStds;
+	}
 };
 
 
-#endif //GENETICALGORITHM_DATASET_H
+#endif //GENETICALGORITHM_DATASET_Hvoid Dataset::meanValueNormalization(double min, double max){
+
