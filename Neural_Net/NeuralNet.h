@@ -68,16 +68,14 @@ public:
 
 	vector<double> Predict(vector<double> data_to_predict, bool echo);
 
-	void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy,
+	void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy, double tolerance,
 		                bool echo);
 
-	void PartialFit(Dataset<double,double> dataset, double accuracy);
+	void PartialFit(Dataset<double,double> dataset, double accuracy, double tolerance, bool echo);
 
 	void Dropout(int layer_to_dropout);
 
 	bool ToDropOrNotToDrop();
-
-	void SaveErrorsToFile(const char *path, vector<double> errors);
 
 	double CheckAccuracy(const Dataset<double, double> &testSet);
 };

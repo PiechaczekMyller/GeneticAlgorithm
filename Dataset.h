@@ -56,60 +56,105 @@ public:
 		vectorOfIndexes = dataset.getVectorOfIndexes();
 	};
 
+//    void getSubsets(double percent_of_subset_for_training_set, double percent_of_subset_for_test_set, Dataset<FeaturesType, LabelsType> &training_set, Dataset<FeaturesType, LabelsType> &test_set)
+//    {
+//        long loop_control = 0;
+//        long a_class_index = 0;
+//        long b_class_index = 0;
+//        vector<vector<double>> random_features;
+//        random_features.reserve(unsigned(this->vectorOfLabels.size() * percent_of_subset_for_training_set));
+//        vector<vector<double>> random_labels;
+//        random_labels.reserve(unsigned(this->vectorOfLabels.size() * percent_of_subset_for_training_set));
+//        vector<long> chosen_indexes;
+//        random_device rd;
+//        mt19937 rng(rd());
+//        uniform_int_distribution<long> a_class(this->vectorOfIndexes[0].front(), this->vectorOfIndexes[0].size());
+//        uniform_int_distribution<long> b_class(this->vectorOfIndexes[1].front(), this->vectorOfIndexes[1].size());
+//        while (loop_control < (this->vectorOfLabels.size() * percent_of_subset_for_training_set)/ 2)
+//        {
+//            a_class_index = this->vectorOfIndexes[0][a_class(rng)];
+//            b_class_index = this->vectorOfIndexes[1][b_class(rng)];
+//            if (find(chosen_indexes.begin(), chosen_indexes.end(), a_class_index) == chosen_indexes.end() && find(chosen_indexes.begin(), chosen_indexes.end(), b_class_index) == chosen_indexes.end()) {
+//                random_features.push_back(this->getVectorOfFeatures()[a_class_index]);
+//                random_labels.push_back(this->getVectorOfLabels()[a_class_index]);
+//                random_features.push_back(this->getVectorOfFeatures()[b_class_index]);
+//                random_labels.push_back(this->getVectorOfLabels()[b_class_index]);
+//                chosen_indexes.push_back(a_class_index);
+//                chosen_indexes.push_back(b_class_index);
+//                loop_control++;
+//            }
+//        }
+//        training_set.vectorOfFeatures = random_features;
+//        training_set.vectorOfLabels = random_labels;
+//	    training_set.setVectorOfIndexes();
+//        random_features.clear();
+//        random_labels.clear();
+//        random_features.reserve(unsigned(this->getVectorOfLabels().size() * percent_of_subset_for_test_set));
+//        random_labels.reserve(unsigned(this->getVectorOfLabels().size() * percent_of_subset_for_test_set));
+//        loop_control = 0;
+//        while (loop_control < (this->getVectorOfLabels().size() * percent_of_subset_for_test_set) / 2)
+//        {
+//            a_class_index = this->vectorOfIndexes[0][a_class(rng)];
+//            b_class_index = this->vectorOfIndexes[1][b_class(rng)];
+//            if (find(chosen_indexes.begin(), chosen_indexes.end(), a_class_index)== chosen_indexes.end() && find(chosen_indexes.begin(), chosen_indexes.end(), b_class_index)== chosen_indexes.end()) {
+//                random_features.push_back(this->getVectorOfFeatures()[a_class_index]);
+//                random_labels.push_back(this->getVectorOfLabels()[a_class_index]);
+//                random_features.push_back(this->getVectorOfFeatures()[b_class_index]);
+//                random_labels.push_back(this->getVectorOfLabels()[b_class_index]);
+//                chosen_indexes.push_back(a_class_index);
+//                chosen_indexes.push_back(b_class_index);
+//                loop_control++;
+//            }
+//        }
+//        test_set.vectorOfFeatures = random_features;
+//        test_set.vectorOfLabels = random_labels;
+//	    test_set.setVectorOfIndexes();
+//        cout << "Subsets created" << endl;
+//        cout << "Size of training set: " << training_set.vectorOfLabels.size() << endl;
+//        cout << "Size of test set: " << test_set.vectorOfLabels.size() << endl;
+//    };
+
     void getSubsets(double percent_of_subset_for_training_set, double percent_of_subset_for_test_set, Dataset<FeaturesType, LabelsType> &training_set, Dataset<FeaturesType, LabelsType> &test_set)
     {
-        long loop_control = 0;
-        long a_class_index = 0;
-        long b_class_index = 0;
+        double training_set_size = this->vectorOfLabels.size() * percent_of_subset_for_training_set;
+        double test_set_size = this->vectorOfLabels.size() * percent_of_subset_for_test_set;
+        long index = 0;
+        vector<vector<long>> indexes_copy = vectorOfIndexes;
         vector<vector<double>> random_features;
+        random_features.reserve(unsigned(training_set_size));
         vector<vector<double>> random_labels;
-        vector<long> chosen_indexes;
-        random_device rd;
-        mt19937 rng(rd());
-        uniform_int_distribution<long> a_class(this->vectorOfIndexes[0].front(), this->vectorOfIndexes[0].size());
-        uniform_int_distribution<long> b_class(this->vectorOfIndexes[1].front(), this->vectorOfIndexes[1].size());
-        while (loop_control < (this->vectorOfLabels.size() * percent_of_subset_for_training_set)/ 2)
-        {
-            a_class_index = this->vectorOfIndexes[0][a_class(rng)];
-            b_class_index = this->vectorOfIndexes[1][b_class(rng)];
-            if (find(chosen_indexes.begin(), chosen_indexes.end(), a_class_index) == chosen_indexes.end() && find(chosen_indexes.begin(), chosen_indexes.end(), b_class_index) == chosen_indexes.end()) {
-                random_features.push_back(this->getVectorOfFeatures()[a_class_index]);
-                random_labels.push_back(this->getVectorOfLabels()[a_class_index]);
-                random_features.push_back(this->getVectorOfFeatures()[b_class_index]);
-                random_labels.push_back(this->getVectorOfLabels()[b_class_index]);
-                chosen_indexes.push_back(a_class_index);
-                chosen_indexes.push_back(b_class_index);
-                loop_control++;
-            }
+        random_labels.reserve(unsigned(training_set_size));
+        random_shuffle(indexes_copy[0].begin(), indexes_copy[0].end());
+        random_shuffle(indexes_copy[1].begin(), indexes_copy[1].end());
+        for (long loop_control = 0; loop_control < (training_set_size)/ 2; loop_control++) {
+            random_features.push_back(this->vectorOfFeatures[indexes_copy[0][index]]); //add A class feature
+            random_labels.push_back(this->vectorOfLabels[indexes_copy[0][index]]);
+            random_features.push_back(this->vectorOfFeatures[indexes_copy[1][index]]); //add B class feature
+            random_labels.push_back(this->vectorOfLabels[indexes_copy[1][index]]);
+            index++;
         }
         training_set.vectorOfFeatures = random_features;
         training_set.vectorOfLabels = random_labels;
-	    training_set.setVectorOfIndexes();
+        training_set.setVectorOfIndexes();
         random_features.clear();
         random_labels.clear();
-        loop_control = 0;
-        while (loop_control < (this->getVectorOfLabels().size() * percent_of_subset_for_test_set) / 2)
+        random_features.reserve(unsigned(test_set_size));
+        random_labels.reserve(unsigned(test_set_size));
+        for (long loop_control = 0; loop_control < test_set_size / 2; loop_control++)
         {
-            a_class_index = this->vectorOfIndexes[0][a_class(rng)];
-            b_class_index = this->vectorOfIndexes[1][b_class(rng)];
-            if (find(chosen_indexes.begin(), chosen_indexes.end(), a_class_index)== chosen_indexes.end() && find(chosen_indexes.begin(), chosen_indexes.end(), b_class_index)== chosen_indexes.end()) {
-                random_features.push_back(this->getVectorOfFeatures()[a_class_index]);
-                random_labels.push_back(this->getVectorOfLabels()[a_class_index]);
-                random_features.push_back(this->getVectorOfFeatures()[b_class_index]);
-                random_labels.push_back(this->getVectorOfLabels()[b_class_index]);
-                chosen_indexes.push_back(a_class_index);
-                chosen_indexes.push_back(b_class_index);
-                loop_control++;
-            }
+            random_features.push_back(this->vectorOfFeatures[indexes_copy[0][index]]); //add A class feature
+            random_labels.push_back(this->vectorOfLabels[indexes_copy[0][index]]);
+            random_features.push_back(this->vectorOfFeatures[indexes_copy[1][index]]); //add B class feature
+            random_labels.push_back(this->vectorOfLabels[indexes_copy[1][index]]);
+            index++;
         }
         test_set.vectorOfFeatures = random_features;
         test_set.vectorOfLabels = random_labels;
-	    test_set.setVectorOfIndexes();
+        test_set.setVectorOfIndexes();
         cout << "Subsets created" << endl;
-        cout << "Size of training set: " << training_set.vectorOfLabels.size() << endl;
-        cout << "Size of test set: " << test_set.vectorOfLabels.size() << endl;
+        cout << "Training set size: " << training_set.vectorOfLabels.size() << endl;
+        cout << "Test set size: " << test_set.vectorOfLabels.size() << endl;
     };
-
 	const std::vector<std::vector<FeaturesType>> &getVectorOfFeatures() const{
 		return vectorOfFeatures;
 	};

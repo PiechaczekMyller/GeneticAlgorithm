@@ -31,7 +31,7 @@ public:
 
     void AddToInput(double Value);
 
-    void ActivationFunction();
+    void SigomoidActivationFunction();
 
     double Derivative();
 
