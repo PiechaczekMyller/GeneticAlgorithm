@@ -66,7 +66,7 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 }
 
 
-void Population::crossover(double crossoverRatio){
+void Population::crossover(Settings settings){
 	cout << "crossover now" << endl;
 	std::vector<Individual> newVectorOfIndividuals;
 	Individual firstIndividual;
