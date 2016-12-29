@@ -13,16 +13,22 @@ using namespace std;
 int main() {
 	srand(time(0));
 
-	vector<vector<double>> labels;
-	vector<vector<double>> features;
-	LoadDataset("/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/dataset.txt",features,labels,26,1);
-	Dataset<double,double> trainingSet(features, labels);
-	vector<vector<double>> testLabels;
-	vector<vector<double>> testFeatures;
-	LoadDataset("/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/testSet.txt",testFeatures,testLabels,26,1);
-	Dataset<double,double> testSet(features, labels);
-	GeneticAlgorithm geneticAlgorithm(trainingSet,testSet);
-	geneticAlgorithm.run();
+	Dataset<double,double> wholeSet;
+	wholeSet = LoadingDatasetFromFile("/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/ecu_1_100_dtf3_train.dat");
+	Dataset<double,double> trainingSet;
+	Dataset<double,double> testSet;
+	wholeSet.getSubsets(0.01,0.001,trainingSet,testSet);
+	trainingSet.maxValueNormalization();
+	testSet.setVectorOfMinValues(trainingSet.getVectorOfMinValues());
+	testSet.setVectorOfMaxValues(trainingSet.getVectorOfMaxValues());
+	testSet.setVectorOfMeanValues(trainingSet.getVectorOfMeanValues());
+	testSet.setVectorOfStds(trainingSet.getVectorOfStds());
+	testSet.maxValueNormalization();
+	NeuralNet myNet({3,6,3,1},0.6,false);
+	myNet.PartialFit(trainingSet,0.01);
+	myNet.CheckAccuracy(testSet);
+//	GeneticAlgorithm geneticAlgorithm(trainingSet,testSet);
+//	geneticAlgorithm.run();
 
 	return 0;
 }
