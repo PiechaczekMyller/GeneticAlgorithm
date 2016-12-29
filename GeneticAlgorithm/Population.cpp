@@ -53,9 +53,10 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 	double accuracy;
 	int index = 0;
 	for(auto &individual:vectorOfIndividuals){
-		NeuralNet newNet(settings.topology, 0.6, false);
-		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01,
-		                  false);
+
+		NeuralNet newNet(settings.topology, settings.learningRate, false);
+		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01, 0.00001,
+		                  true);
 		accuracy = newNet.CheckAccuracy(testSet);
 		individual.setAccuracy(accuracy);
 		individual.setFitnessScore(accuracy, sizeOfTrainingSet, settings.weightForSize, settings.weightForAccuracy);
@@ -64,7 +65,9 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 	}
 }
 
-void Population::crossover(Settings settings){
+
+void Population::crossover(double crossoverRatio){
+	cout << "crossover now" << endl;
 	std::vector<Individual> newVectorOfIndividuals;
 	Individual firstIndividual;
 	Individual secondIndividual;
@@ -107,6 +110,7 @@ vector<double> Population::CalculateWheelSegments(double scores_sum){
 }
 
 void Population::SelectionRouletteWheel(){
+	cout << "selection now" << endl;
 	vector<int> indexes_of_chosen_individuals;
 	double scores_sum = CalculateSumOfFitnessScores();
 	vector<double> wheel_segments = CalculateWheelSegments(scores_sum);
@@ -114,9 +118,9 @@ void Population::SelectionRouletteWheel(){
 	vector<Individual> new_population;
 	new_population.reserve(vectorOfIndividuals.size());
 	random_device rd;
+    mt19937 rng(rd());
+    uniform_int_distribution<int> uni(0, int(wheel_segments.back()));
 	for(int loopControl = 0; loopControl < vectorOfIndividuals.size(); loopControl++){
-		mt19937 rng(rd());
-		uniform_int_distribution<int> uni(0, int(wheel_segments.back()));
 		random_number = uni(rng);
 		for(int wheel_segment = 1; wheel_segment < wheel_segments.size(); wheel_segment++){
 			if(random_number > wheel_segments[wheel_segment - 1] && random_number < wheel_segments[wheel_segment])
@@ -131,17 +135,18 @@ void Population::SelectionRouletteWheel(){
 }
 
 void Population::Mutation(double mutation_probability, Dataset<double, double> &training_set){
+	cout << "mutation now" << endl;
 	double random_int = 0;
 	double random_feature_and_label = 0;
 	random_device rd;
+    mt19937 mt(rd());
+    uniform_int_distribution<int> uni(0, 100);
+    mt19937 rng(rd());
+    uniform_int_distribution<int> unif(0, int(training_set.getVectorOfLabels().size()));
 	for(auto &individual : this->vectorOfIndividuals){
 		for(int index = 0; index < individual.getLabelsVector().size(); index++){
-			mt19937 mt(rd());
-			uniform_int_distribution<int> uni(0, 100);
 			random_int = uni(mt);
 			if(random_int < (mutation_probability * 100)){
-				mt19937 rng(rd());
-				uniform_int_distribution<int> unif(0, int(training_set.getVectorOfLabels().size()));
 				random_feature_and_label = unif(rng);
 				individual.ChangeFeature(index, training_set.getVectorOfFeatures()[random_feature_and_label]);
 				individual.ChangeLabel(index, training_set.getVectorOfLabels()[random_feature_and_label]);

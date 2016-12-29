@@ -141,7 +141,7 @@ void NeuralNet::ProcessDataForward() {
                 this->getLayers()[processed_layer + 1][RightLayerNeuron].AddToInput(single_input);
                 connections_counter++;
             }
-            this->getLayers()[processed_layer + 1][RightLayerNeuron].ActivationFunction();
+            this->getLayers()[processed_layer + 1][RightLayerNeuron].SigomoidActivationFunction();
         }
     }
     this->ResetInputs();
@@ -274,13 +274,11 @@ void NeuralNet::Dropout(int layer_to_dropout){
 //}
 
 void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy,
-                           bool echo){
+                           double tolerance, bool echo){
     double error = 100;
     vector<int> indexes;
-    const char* path = "errors.txt";
-    ofstream file;
-    file.open(path);
     double squared_error = 0;
+    double previous_error = 100;
     for (int i = 0; i < data_to_fit.size(); i++)
     {
         indexes.push_back(i);
@@ -299,21 +297,24 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
             this->UpdateWeights();
         }
         squared_error = squared_error / data_to_fit.size();
-        if (echo == true){
+        if (echo){
             cout << "squared error: " << squared_error << endl;
         }
-        file << squared_error << endl;
+        if (abs(squared_error - previous_error) <= tolerance)
+        {
+            cout << "stopped learning because the score did not improve by " << tolerance << " for two consecutive iterations" << endl;
+            return;
+        }
+        previous_error = squared_error;
         error = squared_error;
     }
 }
 
-void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy) {
+void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy, double tolerance, bool echo) {
     double error = 100;
     vector<int> indexes;
-    const char* path = "errors.txt";
-    ofstream file;
-    file.open(path);
     double squared_error = 0;
+    double previous_error = 100;
     for (int i = 0; i < dataset.getVectorOfFeatures().size(); i++)
     {
         indexes.push_back(i);
@@ -332,8 +333,15 @@ void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy) {
             this->UpdateWeights();
         }
         squared_error = squared_error / dataset.getVectorOfFeatures().size();
-        cout << "squared error: " << squared_error << endl;
-        file << squared_error << endl;
+        if (echo){
+            cout << "squared error: " << squared_error << endl;
+        }
+        if (abs(squared_error - previous_error) <= tolerance)
+        {
+            cout << "stopped learning because the score did not improve by " << tolerance << " for two consecutive iterations" << endl;
+            return;
+        }
+        previous_error = squared_error;
         error = squared_error;
     }
 }
@@ -353,17 +361,6 @@ vector<double> NeuralNet::Predict(vector<double> data_to_predict,bool echo) {
         index++;
     }
     return label;
-}
-
-void NeuralNet::SaveErrorsToFile(const char* path, vector<double> errors) {
-    ofstream file;
-    file.open(path, ios::out);
-    if (file.is_open()) {
-        for (auto error : errors) {
-            file << error << endl;
-        }
-    }
-    file.close();
 }
 
 double NeuralNet::CheckAccuracy(const Dataset<double, double> &testSet){

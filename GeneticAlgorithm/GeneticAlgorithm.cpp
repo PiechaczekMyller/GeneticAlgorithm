@@ -36,7 +36,7 @@ void GeneticAlgorithm::run(){
 	int noOfEpochs = 0;
 	std::vector<double> vectorOfScores;
 	while(noOfEpochs != settings.maxNoOfEpochs){
-		population.checkFitnessScores(testSet, trainingSet.getLength(), settings);
+		population.checkFitnessScores(testSet, trainingSet.getVectorOfFeatures().size(), settings);
 		population.setBestFitnessScore();
 		cout << "Generation " << noOfEpochs << " best fitness score: " << population.getBestFitnessScore() << endl;
 		vectorOfScores.push_back(population.getBestFitnessScore());
