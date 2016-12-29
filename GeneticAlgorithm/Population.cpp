@@ -54,7 +54,7 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 	int index = 0;
 	for(auto &individual:vectorOfIndividuals){
 		NeuralNet newNet(settings.topology, 0.6, false);
-		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), settings.learningRate,
+		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01,
 		                  false);
 		accuracy = newNet.CheckAccuracy(testSet);
 		individual.setAccuracy(accuracy);
@@ -64,7 +64,7 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 	}
 }
 
-void Population::crossover(double crossoverRatio){
+void Population::crossover(Settings settings){
 	std::vector<Individual> newVectorOfIndividuals;
 	Individual firstIndividual;
 	Individual secondIndividual;
@@ -76,9 +76,10 @@ void Population::crossover(double crossoverRatio){
 		randomNumber = (rand() % (vectorOfIndividuals.size()));
 		secondIndividual = vectorOfIndividuals[randomNumber];
 		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + (randomNumber));
-		crossoverIndividuals(crossoverRatio, firstIndividual, secondIndividual);
+		crossoverIndividuals(settings.crossoverProbability, firstIndividual, secondIndividual);
 		newVectorOfIndividuals.push_back(firstIndividual);
-		newVectorOfIndividuals.push_back(secondIndividual);
+		if (settings.twoDescendants)
+			newVectorOfIndividuals.push_back(secondIndividual);
 	}
 	vectorOfIndividuals.insert(vectorOfIndividuals.end(), newVectorOfIndividuals.begin(), newVectorOfIndividuals.end());
 }

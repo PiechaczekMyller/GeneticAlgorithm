@@ -110,6 +110,32 @@ public:
         cout << "Size of test set: " << test_set.vectorOfLabels.size() << endl;
     };
 
+	void meanValueNormalization(double min, double max){
+		vector<long> vectorOfSums;
+		for(auto & feature : this->getVectorOfFeatures()[0]){
+			vectorOfSums.push_back(0);
+		}
+		for(auto & example : this->vectorOfFeatures){
+			int index = 0;
+			for(auto & feature : example){
+				vectorOfSums[index] =+ feature;
+				index++;
+			}
+		}
+		vector<long> vectorOfAverages;
+		for(auto & sum : vectorOfSums){
+			vectorOfAverages.push_back(sum/this->getLength());
+		}
+		for(auto & example : this->vectorOfFeatures){
+			int index = 0;
+			for(auto & feature : example){
+				double featureNorm = (feature-vectorOfAverages[index])/(max-min);
+				feature=featureNorm;
+				index++;
+			}
+		}
+	};
+
 	const std::vector<std::vector<FeaturesType>> &getVectorOfFeatures() const{
 		return vectorOfFeatures;
 	};
@@ -142,4 +168,5 @@ public:
 };
 
 
-#endif //GENETICALGORITHM_DATASET_H
+#endif //GENETICALGORITHM_DATASET_Hvoid Dataset::meanValueNormalization(double min, double max){
+

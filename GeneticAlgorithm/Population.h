@@ -38,7 +38,7 @@ public:
 
 	void checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet, Settings settings);
 
-	void crossover(double crossoverRatio);
+	void crossover(Settings settings);
 
 	virtual ~Population(){ };
 

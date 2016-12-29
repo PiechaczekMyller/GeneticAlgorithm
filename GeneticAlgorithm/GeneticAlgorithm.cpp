@@ -34,15 +34,18 @@ void GeneticAlgorithm::run(){
 	}
 	population.createInitialPopulation(settings.populationSize, trainingSet);
 	int noOfEpochs = 0;
+	std::vector<double> vectorOfScores;
 	while(noOfEpochs != settings.maxNoOfEpochs){
 		population.checkFitnessScores(testSet, trainingSet.getLength(), settings);
 		population.setBestFitnessScore();
 		cout << "Generation " << noOfEpochs << " best fitness score: " << population.getBestFitnessScore() << endl;
+		vectorOfScores.push_back(population.getBestFitnessScore());
 		population.SelectionRouletteWheel();
-		population.crossover(settings.crossoverProbability);
-		population.Mutation(settings.mutationProbability,trainingSet);
+		population.crossover(settings);
+//		population.Mutation(settings.mutationProbability,trainingSet);
 		population.compensate(trainingSet,settings);
 		population.resetBestFitnessScore();
 		noOfEpochs++;
 	}
+	std::cout << *max_element(vectorOfScores.begin(),vectorOfScores.end());
 }
