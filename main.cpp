@@ -15,20 +15,15 @@ int main() {
 
 	Dataset<double,double> wholeSet;
 	wholeSet = LoadingDatasetFromFile("/Users/apple/ClionProjects/GeneticAlgorithm/Datasets/ecu_1_100_dtf3_train.dat");
-	Dataset<double,double> trainingSet;
-	Dataset<double,double> testSet;
-	wholeSet.getSubsets(0.01,0.001,trainingSet,testSet);
-	trainingSet.maxValueNormalization();
-	testSet.setVectorOfMinValues(trainingSet.getVectorOfMinValues());
-	testSet.setVectorOfMaxValues(trainingSet.getVectorOfMaxValues());
-	testSet.setVectorOfMeanValues(trainingSet.getVectorOfMeanValues());
-	testSet.setVectorOfStds(trainingSet.getVectorOfStds());
-	testSet.maxValueNormalization();
-	NeuralNet myNet({3,6,3,1},0.6,false);
-	myNet.PartialFit(trainingSet,0.01);
-	myNet.CheckAccuracy(testSet);
-//	GeneticAlgorithm geneticAlgorithm(trainingSet,testSet);
-//	geneticAlgorithm.run();
+	wholeSet.maxValueNormalization();
+	Dataset<double,double> optimizationSet;
+	Dataset<double,double> trainingSetForOptimization;
+	Dataset<double,double> testSetForOptimization;
+	Dataset<double,double> validationSet;
+	wholeSet.getSubsets(0.001, 0.0001, optimizationSet, validationSet);
+	optimizationSet.getSubsets(0.9, 0.1, trainingSetForOptimization, testSetForOptimization);
+	GeneticAlgorithm geneticAlgorithm(trainingSetForOptimization, testSetForOptimization);
+	geneticAlgorithm.run();
 
 	return 0;
 }

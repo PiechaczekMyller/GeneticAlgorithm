@@ -99,3 +99,4 @@ void crossoverIndividuals(double crossoverRatio, Individual &firstIndividual, In
 		secondIndividual.setSizeOfIndividual();
 	}
 }
+

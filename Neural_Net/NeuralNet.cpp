@@ -148,13 +148,13 @@ void NeuralNet::ProcessDataForward() {
 }
 
 void NeuralNet::ChangeOutputsInInputLayer(vector<double> new_outputs) {
-    if (new_outputs.size() != Topology[0])
-        throw DifferentSizesOfVectors("Neural Net(ChangeOutputsInInputLayer): Input layer vector size and new outputs vector size should be equal!");
-    else {
+    //if (new_outputs.size() != Topology[0])
+  //      throw DifferentSizesOfVectors("Neural Net(ChangeOutputsInInputLayer): Input layer vector size and new outputs vector size should be equal!");
+    //else {
         for (int neuron = 0; neuron < Topology[0]; neuron++) {
             this->getLayers()[0][neuron].set_Output(new_outputs[neuron]);
         }
-    }
+    //}
 }
 
 void NeuralNet::BackPropagationForLastLayer(vector<double> desired_outputs) {
@@ -298,12 +298,13 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
         }
         squared_error = squared_error / data_to_fit.size();
         if (echo){
-            cout << "squared error: " << squared_error << endl;
-        }
-        if (abs(squared_error - previous_error) <= tolerance)
-        {
-            cout << "stopped learning because the score did not improve by " << tolerance << " for two consecutive iterations" << endl;
-            return;
+	        cout << "squared error: " << squared_error << endl;
+
+	        if(abs(squared_error - previous_error) <= tolerance){
+		        cout << "stopped learning because the score did not improve by " << tolerance <<
+		        " for two consecutive iterations" << endl;
+		        return;
+	        }
         }
         previous_error = squared_error;
         error = squared_error;
@@ -333,14 +334,14 @@ void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy, doub
             this->UpdateWeights();
         }
         squared_error = squared_error / dataset.getVectorOfFeatures().size();
-        if (echo){
-            cout << "squared error: " << squared_error << endl;
-        }
-        if (abs(squared_error - previous_error) <= tolerance)
-        {
-            cout << "stopped learning because the score did not improve by " << tolerance << " for two consecutive iterations" << endl;
-            return;
-        }
+	    if (echo){
+		    cout << "squared error: " << squared_error << endl;
+		    if(abs(squared_error - previous_error) <= tolerance){
+			    cout << "stopped learning because the score did not improve by " << tolerance <<
+			    " for two consecutive iterations" << endl;
+			    return;
+		    }
+	    }
         previous_error = squared_error;
         error = squared_error;
     }

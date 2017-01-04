@@ -1,7 +1,6 @@
 //
 // Created by Szymek on 15.12.2016.
 //
-
 #include "GeneticAlgorithm.h"
 #include "../Exceptions/WrongParameterRange.h"
 #include "../Exceptions/WrongMethod.h"
@@ -32,6 +31,7 @@ void GeneticAlgorithm::run(){
 	catch(const WrongMethod &e){
 		e.what();
 	}
+
 	population.createInitialPopulation(settings.populationSize, trainingSet);
 	int noOfEpochs = 0;
 	std::vector<double> vectorOfScores;
@@ -41,11 +41,17 @@ void GeneticAlgorithm::run(){
 		cout << "Generation " << noOfEpochs << " best fitness score: " << population.getBestFitnessScore() << endl;
 		vectorOfScores.push_back(population.getBestFitnessScore());
 		population.SelectionRouletteWheel();
-		population.crossover(settings);
-//		population.Mutation(settings.mutationProbability,trainingSet);
-		population.compensate(trainingSet,settings);
+		Population children(population);
+		children.crossover(settings);
+		children.checkFitnessScores(testSet, trainingSet.getLength(), settings);
+		population.getVectorOfIndividuals().insert(population.getVectorOfIndividuals().begin(),
+		                                           children.getVectorOfIndividuals().begin(),
+		                                           children.getVectorOfIndividuals().end());
+		population.Mutation(settings.mutationProbability, trainingSet);
+		population.compensate(trainingSet, settings);
+		population.sortByFitness();
 		population.resetBestFitnessScore();
 		noOfEpochs++;
 	}
-	std::cout << *max_element(vectorOfScores.begin(),vectorOfScores.end());
+	std::cout << *max_element(vectorOfScores.begin(), vectorOfScores.end());
 }
