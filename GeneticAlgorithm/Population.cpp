@@ -9,7 +9,7 @@ void Population::setVectorOfIndividuals(vector<Individual> new_vector){
 	vectorOfIndividuals = new_vector;
 }
 
-vector<Individual> Population::getVectorOfIndividuals(){
+vector<Individual> &Population::getVectorOfIndividuals(){
 	return vectorOfIndividuals;
 }
 
@@ -55,7 +55,7 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 	for(auto &individual:vectorOfIndividuals){
 
 		NeuralNet newNet(settings.topology, settings.learningRate, false);
-		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01, 0.01,
+		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01, 0.00001,
 		                  true);
 		accuracy = newNet.CheckAccuracy(testSet);
 		individual.setAccuracy(accuracy);
@@ -176,4 +176,20 @@ void Population::compensate(Dataset<double, double> &training_set, Settings sett
 			difference = -1;
 		}
 	}
+}
+
+
+void Population::sortByFitness(){
+	std::sort(vectorOfIndividuals.begin(),vectorOfIndividuals.end(),[](Individual &l, Individual &r) { return l.getFitnessScore() < r.getFitnessScore(); });
+}
+
+void Population::operator=(Population populationToSave){
+	vectorOfIndividuals = populationToSave.vectorOfIndividuals;
+	bestFitnessScore = populationToSave.bestFitnessScore;
+
+}
+
+Population::Population(const Population &populationToSave){
+	vectorOfIndividuals = populationToSave.vectorOfIndividuals;
+	bestFitnessScore = populationToSave.bestFitnessScore;
 }
