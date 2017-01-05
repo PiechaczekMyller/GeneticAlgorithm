@@ -43,13 +43,14 @@ void GeneticAlgorithm::run(){
 		population.SelectionRouletteWheel();
 		Population children(population);
 		children.crossover(settings);
-		children.checkFitnessScores(testSet, trainingSet.getLength(), settings);
+		children.checkFitnessScores(testSet, trainingSet.getVectorOfFeatures().size(), settings);
 		population.getVectorOfIndividuals().insert(population.getVectorOfIndividuals().begin(),
 		                                           children.getVectorOfIndividuals().begin(),
 		                                           children.getVectorOfIndividuals().end());
 		population.Mutation(settings.mutationProbability, trainingSet);
 		population.compensate(trainingSet, settings);
 		population.sortByFitness();
+		population.SurvivorSelection();
 		population.resetBestFitnessScore();
 		noOfEpochs++;
 	}

@@ -69,6 +69,8 @@ public:
 	void createRandomIndividual(const Dataset<double, double> &trainingSet);
 
 	void sortByFitness();
+
+	void SurvivorSelection();
 };
 
 #endif //GENETICALGORITHM_POPULATION_H

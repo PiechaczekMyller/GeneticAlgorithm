@@ -142,7 +142,7 @@ void Population::Mutation(double mutation_probability, Dataset<double, double> &
     mt19937 mt(rd());
     uniform_int_distribution<int> uni(0, 100);
     mt19937 rng(rd());
-    uniform_int_distribution<long> unif(0, int(training_set.getVectorOfLabels().size()));
+    uniform_int_distribution<long> unif(0, int(training_set.getVectorOfLabels().size() - 1));
 	for(auto &individual : this->vectorOfIndividuals){
 		for(int index = 0; index < individual.getSizeOfIndividual(); index++){
 			random_int = uni(mt);
@@ -180,7 +180,7 @@ void Population::compensate(Dataset<double, double> &training_set, Settings sett
 
 
 void Population::sortByFitness(){
-	std::sort(vectorOfIndividuals.begin(),vectorOfIndividuals.end(),[](Individual &l, Individual &r) { return l.getFitnessScore() < r.getFitnessScore(); });
+	std::sort(vectorOfIndividuals.begin(),vectorOfIndividuals.end(),[](Individual &l, Individual &r) { return l.getFitnessScore() > r.getFitnessScore(); });
 }
 
 void Population::operator=(Population populationToSave){
@@ -192,4 +192,14 @@ void Population::operator=(Population populationToSave){
 Population::Population(const Population &populationToSave){
 	vectorOfIndividuals = populationToSave.vectorOfIndividuals;
 	bestFitnessScore = populationToSave.bestFitnessScore;
+}
+
+void Population::SurvivorSelection()
+{
+	vector<Individual> survivors;
+	for (int i = 0; i < vectorOfIndividuals.size() / 2; i++)
+	{
+		survivors.push_back(vectorOfIndividuals[i]);
+	}
+	vectorOfIndividuals = survivors;
 }
