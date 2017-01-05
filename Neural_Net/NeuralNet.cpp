@@ -311,9 +311,9 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
             }
             return;
         }
+        previous_error = squared_error;
+        error = squared_error;
     }
-    previous_error = squared_error;
-    error = squared_error;
 }
 
 void NeuralNet::PartialFit(Dataset<double,double> dataset, bool echo) {
@@ -349,9 +349,9 @@ void NeuralNet::PartialFit(Dataset<double,double> dataset, bool echo) {
             }
             return;
         }
-    }
         previous_error = squared_error;
         error = squared_error;
+    }
     }
 
 vector<double> NeuralNet::Predict(vector<double> data_to_predict,bool echo) {
