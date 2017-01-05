@@ -24,12 +24,14 @@ private:
 	vector<vector<Neuron>> Layers;
 	vector<int> Topology;
 	double LearningRate;
+    double Accuracy;
+    double Tolerance;
 	double DropoutProbability;
 	bool DropoutMethod;
 public:
-	NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method, double dropout_probability);
+	NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method, double dropout_probability);
 
-	NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method);
+	NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method);
 
 	vector<vector<double>> &getConnections();
 
@@ -68,16 +70,18 @@ public:
 
 	vector<double> Predict(vector<double> data_to_predict, bool echo);
 
-	void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy, double tolerance,
+	void PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs,
 		                bool echo);
 
-	void PartialFit(Dataset<double,double> dataset, double accuracy, double tolerance, bool echo);
+	void PartialFit(Dataset<double,double> dataset, bool echo);
 
 	void Dropout(int layer_to_dropout);
 
 	bool ToDropOrNotToDrop();
 
 	double CheckAccuracy(const Dataset<double, double> &testSet);
+
+    double CheckAccuracy(vector<vector<double>> features, vector<vector<double>> labels);
 };
 
 

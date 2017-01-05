@@ -54,10 +54,11 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 	int index = 0;
 	for(auto &individual:vectorOfIndividuals){
 
-		NeuralNet newNet(settings.topology, settings.learningRate, false);
-		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), 0.01, 0.01,
+		NeuralNet newNet(settings.topology, settings.learningRate, settings.accuracy, settings.tolerance, false);
+		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(),
 		                  true);
 		accuracy = newNet.CheckAccuracy(testSet);
+        cout << "accuracy: " << accuracy << endl;
 		individual.setAccuracy(accuracy);
 		individual.setFitnessScore(accuracy, sizeOfTrainingSet, settings.weightForSize, settings.weightForAccuracy);
 		index++;

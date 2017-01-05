@@ -5,9 +5,11 @@
 #include "NeuralNet.h"
 const int InputAndOutputLayers = 2;
 
-NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method, double dropout_probability) {
+NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method, double dropout_probability) {
     this->Topology = Topology;
     this->LearningRate = learning_rate;
+    this->Accuracy = Accuracy;
+    this->Tolerance = Tolerance;
     this->DropoutMethod = dropout_method;
     this->DropoutProbability = dropout_probability;
     CreateLayers();
@@ -15,9 +17,11 @@ NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, bool dropout_me
     this->SetOutputOfBiasNeuron(1.0);
 }
 
-NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, bool dropout_method) {
+NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method) {
     this->Topology = Topology;
     this->LearningRate = learning_rate;
+    this->Accuracy = Accuracy;
+    this->Tolerance = Tolerance;
     this->DropoutMethod = dropout_method;
     this->DropoutProbability = 0;
     CreateLayers();
@@ -273,8 +277,7 @@ void NeuralNet::Dropout(int layer_to_dropout){
 //    }
 //}
 
-void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, double accuracy,
-                           double tolerance, bool echo){
+void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<double>> desired_outputs, bool echo){
     double error = 100;
     vector<int> indexes;
     double squared_error = 0;
@@ -284,7 +287,7 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
         indexes.push_back(i);
     }
     random_shuffle(indexes.begin(), indexes.end());
-    while (error > accuracy)
+    while (error > this->Accuracy)
     {
         squared_error = 0;
         random_shuffle(indexes.begin(), indexes.end());
@@ -297,20 +300,20 @@ void NeuralNet::PartialFit(vector<vector<double>> data_to_fit, vector<vector<dou
             this->UpdateWeights();
         }
         squared_error = squared_error / data_to_fit.size();
-        if (echo){
+        if (echo) {
             cout << "squared error: " << squared_error << endl;
-        }
-        if (abs(squared_error - previous_error) <= tolerance)
-        {
-            cout << "stopped learning because the score did not improve by " << tolerance << " for two consecutive iterations" << endl;
-            return;
+            if (abs(squared_error - previous_error) <= this->Tolerance) {
+                cout << "stopped learning because the score did not improve by " << this->Tolerance
+                     << " for two consecutive iterations" << endl;
+                return;
+            }
         }
         previous_error = squared_error;
         error = squared_error;
     }
 }
 
-void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy, double tolerance, bool echo) {
+void NeuralNet::PartialFit(Dataset<double,double> dataset, bool echo) {
     double error = 100;
     vector<int> indexes;
     double squared_error = 0;
@@ -320,7 +323,7 @@ void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy, doub
         indexes.push_back(i);
     }
     random_shuffle(indexes.begin(), indexes.end());
-    while (error > accuracy)
+    while (error > this->Accuracy)
     {
         squared_error = 0;
         random_shuffle(indexes.begin(), indexes.end());
@@ -333,13 +336,13 @@ void NeuralNet::PartialFit(Dataset<double,double> dataset, double accuracy, doub
             this->UpdateWeights();
         }
         squared_error = squared_error / dataset.getVectorOfFeatures().size();
-        if (echo){
+        if (echo) {
             cout << "squared error: " << squared_error << endl;
-        }
-        if (abs(squared_error - previous_error) <= tolerance)
-        {
-            cout << "stopped learning because the score did not improve by " << tolerance << " for two consecutive iterations" << endl;
-            return;
+            if (abs(squared_error - previous_error) <= this->Tolerance) {
+                cout << "stopped learning because the score did not improve by " << this->Tolerance
+                     << " for two consecutive iterations" << endl;
+                return;
+            }
         }
         previous_error = squared_error;
         error = squared_error;
@@ -357,7 +360,7 @@ vector<double> NeuralNet::Predict(vector<double> data_to_predict,bool echo) {
             cout << "Predicted data:" << endl;
             cout << "Output " << index << ": " << neuron.get_Output() << endl;
         }
-        label.push_back(round(neuron.get_Output()));
+        label.push_back(neuron.get_Output());
         index++;
     }
     return label;
@@ -365,11 +368,37 @@ vector<double> NeuralNet::Predict(vector<double> data_to_predict,bool echo) {
 
 double NeuralNet::CheckAccuracy(const Dataset<double, double> &testSet){
     double correctPredictions = 0;
+    double error = 0;
     long sizeOfSet = testSet.getVectorOfLabels().size();
-    for (int loopControl = 0; loopControl<sizeOfSet;loopControl++){
+    for (int loopControl = 0; loopControl < sizeOfSet; loopControl++){
         vector<double> prediction = Predict(testSet.getVectorOfFeatures()[loopControl],false);
-        vector<double> correctAnswer = testSet.getVectorOfLabels()[loopControl];
-        if(prediction == correctAnswer){
+        vector<double> correctAnswers = testSet.getVectorOfLabels()[loopControl];
+        for (int i = 0; i < correctAnswers.size(); i++)
+        {
+            error = error + abs(correctAnswers[i] - prediction[i]);
+        }
+        error = error/correctAnswers.size();
+        if(error <= this->Accuracy){
+            correctPredictions++;
+        }
+    }
+    double score = correctPredictions/sizeOfSet;
+    return score;
+}
+
+double NeuralNet::CheckAccuracy(vector<vector<double>> features, vector<vector<double>> labels){
+    double correctPredictions = 0;
+    double error = 0;
+    long sizeOfSet = labels.size();
+    for (int loopControl = 0; loopControl < sizeOfSet; loopControl++){
+        vector<double> prediction = Predict(features[loopControl],false);
+        vector<double> correctAnswers = labels[loopControl];
+        for (int i = 0; i < correctAnswers.size(); i++)
+        {
+            error = error + abs(correctAnswers[i] - prediction[i]);
+        }
+        error = error/correctAnswers.size();
+        if(error <= this->Accuracy){
             correctPredictions++;
         }
     }
