@@ -24,9 +24,11 @@ public:
 
 	Population(const std::vector<Individual> &vectorOfIndividuals) : vectorOfIndividuals(vectorOfIndividuals){ }
 
+	Population(const Population &populationToSave);
+
 	void setVectorOfIndividuals(vector<Individual> new_vector);
 
-	vector<Individual> getVectorOfIndividuals();
+	std::vector<Individual> &getVectorOfIndividuals();
 
 	void createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet);
 
@@ -39,6 +41,8 @@ public:
 	void checkFitnessScores(const Dataset<double, double> &testSet, long sizeOfTrainingSet, Settings settings);
 
 	void crossover(Settings settings);
+
+	void operator=(Population populationToSave);
 
 	virtual ~Population(){ };
 
@@ -59,9 +63,12 @@ public:
 	double getBestFitnessScore() const{
 		return bestFitnessScore;
 	}
+
 	void compensate(Dataset<double, double> &training_set, Settings settings);
 
 	void createRandomIndividual(const Dataset<double, double> &trainingSet);
+
+	void sortByFitness();
 };
 
 #endif //GENETICALGORITHM_POPULATION_H
