@@ -70,7 +70,7 @@ public:
 
 	void sortByFitness();
 
-	void SurvivorSelection();
+	void SurvivorSelection(int populationSize);
 };
 
 #endif //GENETICALGORITHM_POPULATION_H

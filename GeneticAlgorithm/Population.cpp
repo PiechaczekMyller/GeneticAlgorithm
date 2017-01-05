@@ -194,10 +194,10 @@ Population::Population(const Population &populationToSave){
 	bestFitnessScore = populationToSave.bestFitnessScore;
 }
 
-void Population::SurvivorSelection()
+void Population::SurvivorSelection(int populationSize)
 {
 	vector<Individual> survivors;
-	for (int i = 0; i < vectorOfIndividuals.size() / 2; i++)
+	for (int i = 0; i < populationSize; i++)
 	{
 		survivors.push_back(vectorOfIndividuals[i]);
 	}
