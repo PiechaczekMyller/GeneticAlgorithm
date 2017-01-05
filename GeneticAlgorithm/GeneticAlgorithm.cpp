@@ -50,7 +50,7 @@ void GeneticAlgorithm::run(){
 		population.Mutation(settings.mutationProbability, trainingSet);
 		population.compensate(trainingSet, settings);
 		population.sortByFitness();
-		population.SurvivorSelection();
+		population.SurvivorSelection(settings.populationSize);
 		population.resetBestFitnessScore();
 		noOfEpochs++;
 	}
