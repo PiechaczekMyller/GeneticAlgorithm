@@ -353,7 +353,6 @@ void NeuralNet::PartialFit(Dataset<double,double> dataset, bool echo) {
         previous_error = squared_error;
         error = squared_error;
     }
-}
 
 vector<double> NeuralNet::Predict(vector<double> data_to_predict,bool echo) {
     this->ChangeOutputsInInputLayer(data_to_predict);
