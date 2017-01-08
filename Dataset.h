@@ -151,7 +151,7 @@ public:
 			}
 		}
 		for(auto &sum : vectorOfSums){
-			vectorOfMeanValues.push_back(sum / getLength());
+			vectorOfMeanValues.push_back(sum / vectorOfFeatures.size());
 		}
 	};
 
@@ -206,7 +206,7 @@ public:
 		}
 		index = 0;
 		for(auto &std:vectorOfStds){
-			double multiplier = 1.0 / this->getLength();
+			double multiplier = 1.0 / this->vectorOfFeatures.size();
 			std = sqrt((multiplier * vectorOfSums[index]));
 			index++;
 		}

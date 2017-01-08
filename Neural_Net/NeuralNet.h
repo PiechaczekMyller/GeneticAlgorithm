@@ -28,8 +28,9 @@ private:
     double Tolerance;
 	double DropoutProbability;
 	bool DropoutMethod;
+	vector<int> LayersToDropout;
 public:
-	NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method, double dropout_probability);
+	NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method, double dropout_probability, vector<int> LayersToDropout);
 
 	NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method);
 
@@ -40,8 +41,6 @@ public:
 	vector<vector<Neuron>> &getLayers();
 
 	void setLayers(const vector<vector<Neuron>> &Layers);
-
-	void CreateLayers();
 
 	void CreateConnections();
 
@@ -77,7 +76,6 @@ public:
 
 	void Dropout(int layer_to_dropout);
 
-	bool ToDropOrNotToDrop();
 
 	double CheckAccuracy(const Dataset<double, double> &testSet);
 

@@ -5,13 +5,14 @@
 #include "NeuralNet.h"
 const int InputAndOutputLayers = 2;
 
-NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method, double dropout_probability) {
+NeuralNet::NeuralNet(vector<int> Topology, double learning_rate, double Accuracy, double Tolerance, bool dropout_method, double dropout_probability, vector<int> LayersToDropout) {
     this->Topology = Topology;
     this->LearningRate = learning_rate;
     this->Accuracy = Accuracy;
     this->Tolerance = Tolerance;
     this->DropoutMethod = dropout_method;
     this->DropoutProbability = dropout_probability;
+    this->LayersToDropout = LayersToDropout;
     CreateLayers();
     CreateConnections();
     this->SetOutputOfBiasNeuron(1.0);
@@ -135,7 +136,8 @@ void NeuralNet::ProcessDataForward() {
             BIAS_NEURON = 0;
         else
             BIAS_NEURON = 1;
-        if (this->DropoutMethod)
+        if (this->DropoutMethod && find(this->LayersToDropout.begin(), this->LayersToDropout.end(), processed_layer) !=
+                                   LayersToDropout.end())
             this->Dropout(processed_layer);
         for(int RightLayerNeuron = 0; RightLayerNeuron < this->getLayers()[processed_layer + 1].size() - BIAS_NEURON; RightLayerNeuron++)
         {
@@ -152,13 +154,13 @@ void NeuralNet::ProcessDataForward() {
 }
 
 void NeuralNet::ChangeOutputsInInputLayer(vector<double> new_outputs) {
-    //if (new_outputs.size() != Topology[0])
-  //      throw DifferentSizesOfVectors("Neural Net(ChangeOutputsInInputLayer): Input layer vector size and new outputs vector size should be equal!");
-    //else {
+    if (new_outputs.size() != Topology[0])
+        throw DifferentSizesOfVectors("Neural Net(ChangeOutputsInInputLayer): Input layer vector size and new outputs vector size should be equal!");
+    else {
         for (int neuron = 0; neuron < Topology[0]; neuron++) {
             this->getLayers()[0][neuron].set_Output(new_outputs[neuron]);
         }
-    //}
+    }
 }
 
 void NeuralNet::BackPropagationForLastLayer(vector<double> desired_outputs) {
@@ -198,19 +200,22 @@ void NeuralNet::BackPropagationForHiddenLayers() {
     }
 }
 
-void NeuralNet::UpdateWeights(){
+void NeuralNet::UpdateWeights() {
     const int BIAS_NEURON = 1;
     double new_weight = 0;
     int connections_counter = 0;
     int connections_vector_counter = int(this->getConnections().size()) - 1;
-    for (int current_layer = int(this->getLayers().size() - 1); current_layer > 0; current_layer--) //start from last layer
+    for (int current_layer = int(this->getLayers().size() - 1);
+         current_layer > 0; current_layer--) //start from last layer
     {
         connections_counter = 0;
-        for (int current_layer_neuron = 0; current_layer_neuron < Topology[current_layer]; current_layer_neuron++)
-        {
-            for (int left_layer_neuron = 0; left_layer_neuron < Topology[current_layer - 1] + BIAS_NEURON; left_layer_neuron++)
-            {
-                new_weight = this->getConnections()[connections_vector_counter][connections_counter] + 2 * LearningRate * this->getLayers()[current_layer][current_layer_neuron].get_Propagated_Error() * this->getLayers()[current_layer - 1][left_layer_neuron].get_Output();
+        for (int current_layer_neuron = 0; current_layer_neuron < Topology[current_layer]; current_layer_neuron++) {
+            for (int left_layer_neuron = 0;
+                 left_layer_neuron < Topology[current_layer - 1] + BIAS_NEURON; left_layer_neuron++) {
+                new_weight = this->getConnections()[connections_vector_counter][connections_counter] +
+                             2 * LearningRate *
+                             this->getLayers()[current_layer][current_layer_neuron].get_Propagated_Error() *
+                             this->getLayers()[current_layer - 1][left_layer_neuron].get_Output();
                 this->getConnections()[connections_vector_counter][connections_counter] = new_weight;
                 connections_counter++;
             }
@@ -233,26 +238,21 @@ double NeuralNet::CalculateSquaredError(vector<double> desired_outputs) {
     return squared_error;
 }
 
-bool NeuralNet::ToDropOrNotToDrop() {
+void NeuralNet::Dropout(int layer_to_dropout){
     int min = 0;
     int max = 9;
-    double random_weight;
+    double random_weight = 0;
     random_device rd;
     mt19937_64 rng(rd());
     uniform_int_distribution<int> uni(min, max);
-    random_weight = uni(rng);
-    random_weight = random_weight / 10;
-    if (random_weight < this->DropoutProbability)
-        return true;
-    else
-        return false;
-}
-
-void NeuralNet::Dropout(int layer_to_dropout){
     for (auto &neuron : this->getLayers()[layer_to_dropout])
     {
-        if (ToDropOrNotToDrop())
-            neuron.set_Output(0.0);
+        if (&neuron != &this->getLayers()[layer_to_dropout].back()) { //make sure not to dropout bias neuron
+            random_weight = uni(rng);
+            random_weight = random_weight / 10;
+            if (random_weight < this->DropoutProbability)
+                neuron.set_Output(0.0);
+        }
     }
 }
 
