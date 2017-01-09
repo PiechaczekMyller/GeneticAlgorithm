@@ -32,6 +32,8 @@ public:
 	void CheckSettings();
 
 	virtual ~GeneticAlgorithm(){ }
+
+	void printStats(int noOfEpochs, Individual &bestIndividual) const;
 };
 
 

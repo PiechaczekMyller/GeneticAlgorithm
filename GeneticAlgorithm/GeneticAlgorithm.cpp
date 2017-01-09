@@ -35,24 +35,39 @@ void GeneticAlgorithm::run(){
 	population.createInitialPopulation(settings.populationSize, trainingSet);
 	int noOfEpochs = 0;
 	std::vector<double> vectorOfScores;
+	Individual bestIndividualFromPopulation;
+	Individual bestIndividual;
 	while(noOfEpochs != settings.maxNoOfEpochs){
 		population.checkFitnessScores(testSet, trainingSet.getVectorOfFeatures().size(), settings);
-		population.setBestFitnessScore();
-		cout << "Generation " << noOfEpochs << " best fitness score: " << population.getBestFitnessScore() << endl;
+		population.sortByFitness();
+		bestIndividualFromPopulation =population.getVectorOfIndividuals()[0];
+		if(bestIndividualFromPopulation.getFitnessScore() >= bestIndividual.getFitnessScore()){
+			if(bestIndividualFromPopulation.getFeaturesVector().size()<bestIndividual.getFeaturesVector().size()){
+				bestIndividual=bestIndividualFromPopulation;
+			}
+		}
+		population.setStats();
+		printStats(noOfEpochs, bestIndividualFromPopulation);
 		vectorOfScores.push_back(population.getBestFitnessScore());
 		population.SelectionRouletteWheel();
 		Population children(population);
 		children.crossover(settings);
+		children.compensate(trainingSet, settings);
 		children.checkFitnessScores(testSet, trainingSet.getVectorOfFeatures().size(), settings);
 		population.getVectorOfIndividuals().insert(population.getVectorOfIndividuals().begin(),
 		                                           children.getVectorOfIndividuals().begin(),
 		                                           children.getVectorOfIndividuals().end());
 		population.Mutation(settings.mutationProbability, trainingSet);
-		population.compensate(trainingSet, settings);
-		population.sortByFitness();
 		population.SurvivorSelection(settings.populationSize);
 		population.resetBestFitnessScore();
 		noOfEpochs++;
 	}
 	std::cout << *max_element(vectorOfScores.begin(), vectorOfScores.end());
+}
+
+void GeneticAlgorithm::printStats(int noOfEpochs, Individual &bestIndividual) const{
+	cout << "Generation " << noOfEpochs << " best fitness score: " << population.getBestFitnessScore() << endl;
+	cout << "Best individual: " << bestIndividual.getSerialNumber() << " accuracy: " << bestIndividual.getAccuracy() << " size: "<< bestIndividual.getFeaturesVector().size() << endl;
+	cout << "Mean fitness score: " << population.getMeanFitnessScore() << " Worst fitness score: " << population.getWorstFitnessScore() << endl;
+	cout << "Max length: " << population.getMaxLenght() << " Min length: " << population.getMinLength() << " Mean Length: " << population.getMeanLength() << endl;
 }

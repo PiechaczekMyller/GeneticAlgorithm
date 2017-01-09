@@ -26,9 +26,9 @@ void Population::createRandomIndividual(const Dataset<double, double> &trainingS
 	const long datasetLength = trainingSet.getVectorOfLabels().size();
 	const long randomLength = (rand() % datasetLength) / 2;
 	for(int loopControl2 = 0; loopControl2 < randomLength; loopControl2 = loopControl2 + 2){
-			addAClassExample(trainingSet, randomFeaturesVector, labelsVector);
-			addBClassExample(trainingSet, randomFeaturesVector, labelsVector);
-		}
+		addAClassExample(trainingSet, randomFeaturesVector, labelsVector);
+		addBClassExample(trainingSet, randomFeaturesVector, labelsVector);
+	}
 	Individual newIndividual(randomFeaturesVector, labelsVector);
 	vectorOfIndividuals.push_back(newIndividual);
 }
@@ -57,7 +57,7 @@ void Population::checkFitnessScores(const Dataset<double, double> &testSet, long
 		NeuralNet newNet(settings.topology, settings.learningRate, settings.accuracy, settings.tolerance, false);
 		newNet.PartialFit(individual.getFeaturesVector(), individual.getLabelsVector(), false);
 		accuracy = newNet.CheckAccuracy(testSet);
-        cout << "accuracy: " << accuracy << endl;
+		cout << "accuracy: " << accuracy << endl;
 		individual.setAccuracy(accuracy);
 		individual.setFitnessScore(accuracy, sizeOfTrainingSet, settings.weightForSize, settings.weightForAccuracy);
 		index++;
@@ -81,8 +81,11 @@ void Population::crossover(Settings settings){
 		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + (randomNumber));
 		crossoverIndividuals(settings.crossoverProbability, firstIndividual, secondIndividual);
 		newVectorOfIndividuals.push_back(firstIndividual);
-		if (settings.twoDescendants)
+		firstIndividual.setSerialNumber();
+		if(settings.twoDescendants){
 			newVectorOfIndividuals.push_back(secondIndividual);
+			secondIndividual.setSerialNumber();
+		}
 	}
 	vectorOfIndividuals.insert(vectorOfIndividuals.end(), newVectorOfIndividuals.begin(), newVectorOfIndividuals.end());
 }
@@ -118,8 +121,8 @@ void Population::SelectionRouletteWheel(){
 	vector<Individual> new_population;
 	new_population.reserve(vectorOfIndividuals.size());
 	random_device rd;
-    mt19937 rng(rd());
-    uniform_int_distribution<int> uni(0, int(wheel_segments.back()));
+	mt19937 rng(rd());
+	uniform_int_distribution<int> uni(0, int(wheel_segments.back()));
 	for(int loopControl = 0; loopControl < vectorOfIndividuals.size(); loopControl++){
 		random_number = uni(rng);
 		for(int wheel_segment = 1; wheel_segment < wheel_segments.size(); wheel_segment++){
@@ -139,10 +142,10 @@ void Population::Mutation(double mutation_probability, Dataset<double, double> &
 	double random_int = 0;
 	double random_feature_and_label = 0;
 	random_device rd;
-    mt19937 mt(rd());
-    uniform_int_distribution<int> uni(0, 100);
-    mt19937 rng(rd());
-    uniform_int_distribution<long> unif(0, int(training_set.getVectorOfLabels().size() - 1));
+	mt19937 mt(rd());
+	uniform_int_distribution<int> uni(0, 100);
+	mt19937 rng(rd());
+	uniform_int_distribution<long> unif(0, int(training_set.getVectorOfLabels().size() - 1));
 	for(auto &individual : this->vectorOfIndividuals){
 		for(int index = 0; index < individual.getSizeOfIndividual(); index++){
 			random_int = uni(mt);
@@ -156,6 +159,7 @@ void Population::Mutation(double mutation_probability, Dataset<double, double> &
 }
 
 void Population::setBestFitnessScore(){
+	bestFitnessScore = 0;
 	for(auto &individual:vectorOfIndividuals){
 		if(individual.getFitnessScore() > bestFitnessScore){
 			bestFitnessScore = individual.getFitnessScore();
@@ -180,7 +184,8 @@ void Population::compensate(Dataset<double, double> &training_set, Settings sett
 
 
 void Population::sortByFitness(){
-	std::sort(vectorOfIndividuals.begin(),vectorOfIndividuals.end(),[](Individual &l, Individual &r) { return l.getFitnessScore() > r.getFitnessScore(); });
+	std::sort(vectorOfIndividuals.begin(), vectorOfIndividuals.end(),
+	          [ ](Individual &l, Individual &r){ return l.getFitnessScore() > r.getFitnessScore(); });
 }
 
 void Population::operator=(Population populationToSave){
@@ -194,12 +199,67 @@ Population::Population(const Population &populationToSave){
 	bestFitnessScore = populationToSave.bestFitnessScore;
 }
 
-void Population::SurvivorSelection(int populationSize)
-{
+void Population::SurvivorSelection(int populationSize){
 	vector<Individual> survivors;
-	for (int i = 0; i < populationSize; i++)
-	{
+	for(int i = 0; i < populationSize; i++){
 		survivors.push_back(vectorOfIndividuals[i]);
 	}
 	vectorOfIndividuals = survivors;
+}
+
+void Population::setStats(){
+	setBestFitnessScore();
+	setMeanFitness();
+	setWorstFitness();
+	setMaxLength();
+	setMinLength();
+	setMeanLength();
+}
+
+void Population::setWorstFitness(){
+	worstFitnessScore = 2;
+	for(auto &individual:vectorOfIndividuals){
+		if(individual.getFitnessScore() < worstFitnessScore){
+			worstFitnessScore = individual.getFitnessScore();
+
+		}
+	}
+}
+
+void Population::setMeanFitness(){
+	meanFitnessScore = 0;
+	double sum = 0;
+	for(auto &individual:vectorOfIndividuals){
+		sum = sum + individual.getFitnessScore();
+	}
+	meanFitnessScore = (sum / vectorOfIndividuals.size());
+}
+
+void Population::setMaxLength(){
+	maxLenght = 0;
+	for(auto &individual:vectorOfIndividuals){
+		if(individual.getFeaturesVector().size() > maxLenght){
+			maxLenght = individual.getFeaturesVector().size();
+
+		}
+	}
+}
+
+void Population::setMinLength(){
+	minLength = vectorOfIndividuals[0].getFeaturesVector().size();
+	for(auto &individual:vectorOfIndividuals){
+		if(individual.getFeaturesVector().size() < minLength){
+			minLength = individual.getFeaturesVector().size();
+
+		}
+	}
+}
+
+void Population::setMeanLength(){
+	meanLength = 0;
+	double sum = 0;
+	for(auto &individual:vectorOfIndividuals){
+		sum = sum + individual.getFeaturesVector().size();
+	}
+	meanLength = (sum / vectorOfIndividuals.size());
 }

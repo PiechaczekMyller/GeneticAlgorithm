@@ -18,6 +18,13 @@ class Population{
 private:
 	std::vector<Individual> vectorOfIndividuals;
 	double bestFitnessScore = 0;
+	double meanFitnessScore = 0;
+	double worstFitnessScore = 2;
+	long maxLenght;
+	long minLength;
+	double meanLength;
+
+
 public:
 
 	Population(){ }
@@ -71,6 +78,38 @@ public:
 	void sortByFitness();
 
 	void SurvivorSelection(int populationSize);
+
+	void setStats();
+
+	void setWorstFitness();
+
+	void setMeanFitness();
+
+	void setMaxLength();
+
+	void setMinLength();
+
+	void setMeanLength();
+
+	double getMeanFitnessScore() const{
+		return meanFitnessScore;
+	}
+
+	double getWorstFitnessScore() const{
+		return worstFitnessScore;
+	}
+
+	long getMaxLenght() const{
+		return maxLenght;
+	}
+
+	long getMinLength() const{
+		return minLength;
+	}
+
+	double getMeanLength() const{
+		return meanLength;
+	}
 };
 
 #endif //GENETICALGORITHM_POPULATION_H

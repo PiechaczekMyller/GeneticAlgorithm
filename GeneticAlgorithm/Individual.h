@@ -15,17 +15,27 @@ private:
 	double fitnessScore = 0;
 	double accuracy=0;
 	long sizeOfIndividual;
+	static long count;
+	long serialNumber;
 public:
 
-	Individual(){ }
+	long getSerialNumber() const{
+		return serialNumber;
+	}
 
-    void setScore(double newScore);
+	double getAccuracy() const{
+		return accuracy;
+	}
+
+
+	void setSerialNumber();
+
+	Individual();
 
 	Individual(vector<vector<double>> &featuresVector,
-	           vector<vector<double>> &labelsVector)
-			: featuresVector(featuresVector), labelsVector(labelsVector){
-		sizeOfIndividual=labelsVector.size();
-	};
+	           vector<vector<double>> &labelsVector);
+
+	void setScore(double newScore);
 
 	vector<vector<double>> &getFeaturesVector(){
 		return featuresVector;
