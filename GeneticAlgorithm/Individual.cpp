@@ -99,6 +99,8 @@ void crossoverIndividuals(double crossoverRatio, Individual &firstIndividual, In
 			index_b++;
 		}
 		secondIndividual.setSizeOfIndividual();
+		firstIndividual.setSerialNumber();
+		secondIndividual.setSerialNumber();
 	}
 }
 
