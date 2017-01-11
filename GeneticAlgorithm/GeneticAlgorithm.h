@@ -16,6 +16,8 @@ private:
 	Population population;
 	Dataset<double, double> trainingSet;
 	Dataset<double, double> testSet;
+	int noOfEpochs = 0;
+	time_t timeAtBeginning;
 public:
 	Settings settings;
 
@@ -27,11 +29,15 @@ public:
 	                 const Settings &settings) : trainingSet(
 			trainingSet), testSet(testSet), settings(settings){ }
 
-	void run();
+	Individual & run();
 
 	void CheckSettings();
 
 	virtual ~GeneticAlgorithm(){ }
+
+	void printStats(int noOfEpochs, Individual &bestIndividual) const;
+
+	void saveResults(std::string filename);
 };
 
 

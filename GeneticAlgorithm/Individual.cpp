@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <tuple>
 
+long Individual::count = 0;
+
 void Individual::setScore(double newScore) // needed just for debugging
 {
 	fitnessScore = newScore;
@@ -97,6 +99,21 @@ void crossoverIndividuals(double crossoverRatio, Individual &firstIndividual, In
 			index_b++;
 		}
 		secondIndividual.setSizeOfIndividual();
+		firstIndividual.setSerialNumber();
+		secondIndividual.setSerialNumber();
 	}
 }
 
+Individual::Individual(){
+	serialNumber = ++count;
+}
+
+Individual::Individual(vector<vector<double>> &featuresVector, vector<vector<double>> &labelsVector)
+		: featuresVector(featuresVector), labelsVector(labelsVector){
+	sizeOfIndividual=labelsVector.size();
+	serialNumber = ++count;
+}
+
+void Individual::setSerialNumber(){
+	serialNumber = ++count;
+}
