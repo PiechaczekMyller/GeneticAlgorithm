@@ -17,7 +17,16 @@
 class Population{
 private:
 	std::vector<Individual> vectorOfIndividuals;
-	double bestFitnessScore = 0;
+	double maxFitnessScore = 0;
+	double meanFitnessScore = 0;
+	double minFitnessScore = 2;
+	long maxLenght;
+	long minLength;
+	double meanLength;
+	double maxAccuracy = 0;
+	double meanAccuracy = 0;
+	double minAccuracy = 2;
+
 public:
 
 	Population(){ }
@@ -30,7 +39,8 @@ public:
 
 	std::vector<Individual> &getVectorOfIndividuals();
 
-	void createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet);
+	void createInitialPopulation(const int sizeOfPopulation, const Dataset<double, double> &trainingSet,
+		                             Settings settings);
 
 	void addAClassExample(const Dataset<double, double> &trainingSet, vector<vector<double>> &randomFeaturesVector,
 	                      vector<vector<double>> &labelsVector) const;
@@ -61,16 +71,74 @@ public:
 	void resetBestFitnessScore();
 
 	double getBestFitnessScore() const{
-		return bestFitnessScore;
+		return maxFitnessScore;
 	}
 
 	void compensate(Dataset<double, double> &training_set, Settings settings);
 
-	void createRandomIndividual(const Dataset<double, double> &trainingSet);
+	void createRandomIndividual(const Dataset<double, double> &trainingSet, Settings &settings);
 
 	void sortByFitness();
 
 	void SurvivorSelection(int populationSize);
+
+	void setStats();
+
+	void setWorstFitness();
+
+	void setMeanFitness();
+
+	void setMaxLength();
+
+	void setMinLength();
+
+	void setMeanLength();
+
+	void setMaxAccuracy();
+
+	void setMinAccuracy();
+
+	void setMeanAccuracy();
+
+	double getMeanFitnessScore() const{
+		return meanFitnessScore;
+	}
+
+	double getWorstFitnessScore() const{
+		return minFitnessScore;
+	}
+
+	long getMaxLenght() const{
+		return maxLenght;
+	}
+
+	long getMinLength() const{
+		return minLength;
+	}
+
+	double getMeanLength() const{
+		return meanLength;
+	}
+
+	double getMaxFitnessScore() const{
+		return maxFitnessScore;
+	}
+
+	double getMinFitnessScore() const{
+		return minFitnessScore;
+	}
+
+	double getMaxAccuracy() const{
+		return maxAccuracy;
+	}
+
+	double getMeanAccuracy() const{
+		return meanAccuracy;
+	}
+
+	double getMinAccuracy() const{
+		return minAccuracy;
+	}
 };
 
 #endif //GENETICALGORITHM_POPULATION_H
