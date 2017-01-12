@@ -81,8 +81,6 @@ public:
 	double CheckAccuracy(const Dataset<double, double> &testSet);
 
     double CheckAccuracy(vector<vector<double>> features, vector<vector<double>> labels);
-
-	void CreateLayers();
 };
 
 

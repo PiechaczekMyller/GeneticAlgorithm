@@ -34,6 +34,9 @@ struct Settings{
 	double learningRate = 0.6;
 	double accuracy = 0.01;
 	double tolerance = 0.00001;
+    vector<int> LayersToDropout = {};
+    bool DropoutMethod = false
+    double DropoutProbability = 0;
 
 	std::string fileForResults = "/Users/apple/ClionProjects/GeneticAlgorithm/Neural_Net/Outputs/test.txt";
 };
