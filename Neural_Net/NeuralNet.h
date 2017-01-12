@@ -44,6 +44,8 @@ public:
 
 	void CreateConnections();
 
+    void CreateLayers();
+
 	virtual ~NeuralNet();
 
 	void ProcessDataForward();

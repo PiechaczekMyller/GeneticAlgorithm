@@ -6,6 +6,8 @@
 #define GENETICALGORITHM_DATASET_H
 
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
 #include <stdlib.h>
 #include <random>
@@ -21,6 +23,16 @@ private:
 	std::vector<std::vector<FeaturesType>> vectorOfFeatures;
 	std::vector<std::vector<LabelsType>> vectorOfLabels;
 	std::vector<std::vector<long>> vectorOfIndexes;
+public:
+	void setVectorOfFeatures(const vector<vector<FeaturesType>> &vectorOfFeatures) {
+		Dataset::vectorOfFeatures = vectorOfFeatures;
+	}
+
+	void setVectorOfLabels(const vector<vector<LabelsType>> &vectorOfLabels) {
+		Dataset::vectorOfLabels = vectorOfLabels;
+	}
+
+private:
 	std::vector<double> vectorOfMeanValues;
 	std::vector<double> vectorOfMaxValues;
 	std::vector<double> vectorOfMinValues;
@@ -318,7 +330,7 @@ public:
         cout << "Training set size: " << training_set.vectorOfLabels.size() << endl;
         cout << "Test set size: " << test_set.vectorOfLabels.size() << endl;
     };
-    
+
 	const std::vector<std::vector<FeaturesType>> &getVectorOfFeatures() const{
 		return vectorOfFeatures;
 	};

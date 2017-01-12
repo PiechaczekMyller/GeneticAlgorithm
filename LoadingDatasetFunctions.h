@@ -29,6 +29,8 @@ void getThirdFeature(const char *memblock, const int FEATUREBYTES, int loopContr
 
 void getDataDimension(int &dimensionOfData, ifstream &file, streampos &size, char *&memblock);
 
-void LoadDataset(const char *path, vector<vector<double>> &features, vector<vector<double>> &labels, int n_inputs, int n_outputs);
+void JoinDatasets(Dataset<double, double> &trainingSet, Dataset<double, double> &testSet, int test_set_index);
+
+Dataset<double,double> LoadSingleDataset(const char *path);
 
 #endif //GENETICALGORITHM_LOADINGDATASETFUNCTIONS_H
