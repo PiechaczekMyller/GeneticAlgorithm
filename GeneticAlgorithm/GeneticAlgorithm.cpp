@@ -61,6 +61,7 @@ Individual & GeneticAlgorithm::run(){
 		                                           children.getVectorOfIndividuals().begin(),
 		                                           children.getVectorOfIndividuals().end());
 		population.Mutation(settings.mutationProbability, trainingSet);
+		population.sortByFitness();
 		population.SurvivorSelection(settings.populationSize);
 		population.resetBestFitnessScore();
 		noOfEpochs++;
