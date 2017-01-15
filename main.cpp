@@ -23,6 +23,7 @@ int main() {
 	resultFile.open(settings.fileForResults, std::ios::app);
 	if(resultFile.good()){
 		resultFile << myNet.CheckAccuracy(validationSet);
+		resultFile.close();
 	}
 
 	return 0;
