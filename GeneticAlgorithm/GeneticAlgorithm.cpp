@@ -38,15 +38,18 @@ Individual & GeneticAlgorithm::run(){
 	std::vector<double> vectorOfScores;
 	Individual bestIndividualFromPopulation;
 	Individual bestIndividual;
+	int generationsWithoutImprovement = 0;
 	timeAtBeginning = time(NULL);
-	while(noOfEpochs != settings.maxNoOfEpochs){
+	while(noOfEpochs != settings.maxNoOfEpochs && generationsWithoutImprovement != 5){
 		population.checkFitnessScores(testSet, trainingSet.getVectorOfFeatures().size(), settings);
 		population.sortByFitness();
 		bestIndividualFromPopulation = population.getVectorOfIndividuals()[0];
 		if(bestIndividualFromPopulation.getFitnessScore() >= bestIndividual.getFitnessScore()){
-			if(bestIndividualFromPopulation.getFeaturesVector().size() < bestIndividual.getFeaturesVector().size()){
 				bestIndividual = bestIndividualFromPopulation;
+				generationsWithoutImprovement = 0;
 			}
+		else{
+			generationsWithoutImprovement++;
 		}
 		population.setStats();
 		saveResults(settings.fileForResults);

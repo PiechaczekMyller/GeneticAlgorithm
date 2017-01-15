@@ -15,15 +15,15 @@ struct Settings{
 
 	//GA RUN SETTINGS
 	int populationSize = 5;
-	double individualSize=0.1;
-	double mutationProbability = 0.01;
+	double individualSize=0.001;
+	double mutationProbability = 0.1;
 	double crossoverProbability=0.7;
 	double randomPickProbability = 0.01;
-	bool twoDescendants = false;
+	bool twoDescendants = true;
 
 	//WEIGHTS FOR FITNESS SCORE
-	double weightForAccuracy=0.75;
-	double weightForSize=0.25;
+	double weightForAccuracy=1.0;
+	double weightForSize=0.0;
 
 	//METHODS TO USE
 	string selectionMethod = "RouletteWheel";
@@ -35,7 +35,7 @@ struct Settings{
 	double accuracy = 0.01;
 	double tolerance = 0.00001;
     vector<int> LayersToDropout = {};
-    bool DropoutMethod = false
+    bool DropoutMethod = false;
     double DropoutProbability = 0;
 
 	std::string fileForResults = "/Users/apple/ClionProjects/GeneticAlgorithm/Neural_Net/Outputs/test.txt";
