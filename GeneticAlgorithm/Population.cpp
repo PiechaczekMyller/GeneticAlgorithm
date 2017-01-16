@@ -147,6 +147,7 @@ void Population::Mutation(double mutation_probability, Dataset<double, double> &
 	cout << "mutation now" << endl;
 	double random_int = 0;
 	double random_feature_and_label = 0;
+	bool valid_label = false;
 	random_device rd;
 	mt19937 mt(rd());
 	uniform_int_distribution<int> uni(0, 100);
@@ -157,8 +158,15 @@ void Population::Mutation(double mutation_probability, Dataset<double, double> &
 			random_int = uni(mt);
 			if(random_int < (mutation_probability * 100)){
 				random_feature_and_label = unif(rng);
-				individual.ChangeFeature(index, training_set.getVectorOfFeatures()[random_feature_and_label]);
-				individual.ChangeLabel(index, training_set.getVectorOfLabels()[random_feature_and_label]);
+				while(!valid_label)
+				{
+					random_feature_and_label = unif(rng);
+					if (training_set.getVectorOfLabels()[random_feature_and_label][0] == individual.getLabelsVector()[index][0]) {
+						individual.ChangeFeature(index, training_set.getVectorOfFeatures()[random_feature_and_label]);
+						individual.ChangeLabel(index, training_set.getVectorOfLabels()[random_feature_and_label]);
+						valid_label = true;
+					}
+				}
 			}
 		}
 	}
