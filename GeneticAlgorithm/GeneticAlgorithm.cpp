@@ -23,7 +23,7 @@ void GeneticAlgorithm::CheckSettings(){
 		throw WrongMethod(settings.crossoverMethod, possible_crossover_methods);
 }
 
-Individual & GeneticAlgorithm::run(){
+Individual GeneticAlgorithm::run(){
 	try{
 		CheckSettings();
 	}
@@ -58,12 +58,13 @@ Individual & GeneticAlgorithm::run(){
 		population.SelectionRouletteWheel();
 		Population children(population);
 		children.crossover(settings);
-		children.compensate(trainingSet, settings);
 		children.checkFitnessScores(testSet, trainingSet.getVectorOfFeatures().size(), settings);
+		children.setStats();
 		population.getVectorOfIndividuals().insert(population.getVectorOfIndividuals().begin(),
 		                                           children.getVectorOfIndividuals().begin(),
 		                                           children.getVectorOfIndividuals().end());
 		population.Mutation(settings.mutationProbability, trainingSet);
+		population.compensate(trainingSet, settings);
 		population.sortByFitness();
 		population.SurvivorSelection(settings.populationSize);
 		population.resetBestFitnessScore();
@@ -88,23 +89,48 @@ void GeneticAlgorithm::saveResults(std::string filename){
 	resultFile.open(filename, std::ios::app);
 	if(resultFile.good()){
 		resultFile.seekg(0, ios::end);
-		if(resultFile.tellg() == 0){
-			resultFile << "Generation number,"
-					"Max fitness,Min fitness,Mean fitness,"
-					"Max accuracy,Min accuracy,Mean accuracy,"
-					"Max length,Min length,Mean length,"
-					"Time\n";
+		if(isEmpty(resultFile)){
+			SaveHeader(resultFile);
+			saveData(resultFile);
 		}
 		else{
-			resultFile << noOfEpochs << "," << population.getMaxFitnessScore() << "," <<
-			population.getMinFitnessScore() << "," << population.getMeanFitnessScore()
-			<< "," << population.getMaxAccuracy() << "," << population.getMinAccuracy() << "," <<
-			population.getMeanAccuracy()
-			<< "," << population.getMaxLenght() << "," << population.getMinLength() << "," << population.getMeanLength()
-			<< "," << difftime(time(NULL), timeAtBeginning) << "\n";
+			saveData(resultFile);
 		}
 		resultFile.close();
 	}
 	else
 		cout << "cannot open file" << endl;
+}
+
+bool GeneticAlgorithm::isEmpty(fstream &resultFile) const{ return resultFile.tellg() == 0; }
+
+void GeneticAlgorithm::saveData(fstream &resultFile) const{
+	resultFile
+	<< noOfEpochs
+	<< "," << population.getMaxFitnessScore()
+	<< "," << population.getMinFitnessScore()
+	<< "," << population.getMeanFitnessScore()
+	<< "," << population.getMaxAccuracy()
+	<< "," << population.getMinAccuracy()
+	<< "," << population.getMeanAccuracy()
+	<< "," << population.getMaxLenght()
+	<< "," << population.getMinLength()
+	<< "," << population.getMeanLength()
+	<< "," << difftime(time(NULL), timeAtBeginning)
+	<< "\n";
+}
+
+void GeneticAlgorithm::SaveHeader(fstream &resultFile) const{
+	resultFile << "Generation number,"
+			              "Max fitness,"
+			              "Min fitness,"
+			              "Mean fitness,"
+			              "Max accuracy,"
+			              "Min accuracy,"
+			              "Mean accuracy,"
+			              "Max length,"
+			              "Min length,"
+			              "Mean length,"
+			              "Time"
+			              "\n";
 }
