@@ -29,7 +29,7 @@ public:
 	                 const Settings &settings) : trainingSet(
 			trainingSet), testSet(testSet), settings(settings){ }
 
-	Individual & run();
+	Individual run();
 
 	void CheckSettings();
 
@@ -38,6 +38,12 @@ public:
 	void printStats(int noOfEpochs, Individual &bestIndividual) const;
 
 	void saveResults(std::string filename);
+
+	void SaveHeader(fstream &resultFile) const;
+
+	void saveData(fstream &resultFile) const;
+
+	bool isEmpty(fstream &resultFile) const;
 };
 
 

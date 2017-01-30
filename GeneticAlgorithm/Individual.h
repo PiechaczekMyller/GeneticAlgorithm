@@ -6,6 +6,7 @@
 #define GENETICALGORITHM_INDIVIDUAL_H
 
 #include <vector>
+#include "Settings.h"
 
 using namespace std;
 
@@ -30,6 +31,7 @@ public:
 
 
 	void setSerialNumber();
+
 
 	Individual();
 
@@ -58,6 +60,23 @@ public:
 	                     double weightForAccuracy);
 
 	friend void crossoverIndividuals(double crossoverRatio, Individual &firstIndividual, Individual &secondIndividual);
+
+	friend void crossoverForManyIndividuals(Individual &firstIndividual, Individual &secondIndividual,
+	                                        vector<Individual> &vectorOfIndividuals, Settings &settings);
+
+	friend void clearIndividuals(Individual &firstIndividual, Individual &secondIndividual);
+
+	friend void separateFeatures(Individual &individual, vector<vector<double>> &aClassFeatures,
+	                             vector<vector<double>> &bClassFeatures);
+
+	friend void createNewDescendant(Individual &individual, const vector<vector<double>> &aClassFeatures,
+	                                const vector<vector<double>> &bClassFeatures, long &indexA, long &indexB);
+
+	friend void createNewDescendant(vector<Individual> &vectorOfIndividuals, double randomNumber,
+	                                const vector<vector<double>> &aClassFeatures,
+	                                const vector<vector<double>> &bClassFeatures,
+	                                const vector<double> &one, const vector<double> &zero, Individual &newIndividual,
+	                                long newIndividualSize);
 
 	virtual ~Individual(){ };
 

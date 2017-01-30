@@ -26,14 +26,14 @@ void Population::createRandomIndividual(const Dataset<double, double> &trainingS
 	vector<vector<double>> randomFeaturesVector;
 	vector<vector<double>> labelsVector;
 	const long datasetLength = trainingSet.getVectorOfLabels().size();
-	double individualSize=0;
+	double individualSize = 0;
 	if(settings.individualSize == 0)
 		individualSize = (rand() % datasetLength) / 2;
 	else if(settings.individualSize > 1)
 		individualSize = settings.individualSize;
 	else if(settings.individualSize < 1){
 		individualSize = round(settings.individualSize * datasetLength);
-		}
+	}
 	for(int loopControl2 = 0; loopControl2 < individualSize; loopControl2 = loopControl2 + 2){
 		addAClassExample(trainingSet, randomFeaturesVector, labelsVector);
 		addBClassExample(trainingSet, randomFeaturesVector, labelsVector);
@@ -87,10 +87,16 @@ void Population::crossover(Settings settings){
 		randomNumber = (rand() % (vectorOfIndividuals.size()));
 		secondIndividual = vectorOfIndividuals[randomNumber];
 		vectorOfIndividuals.erase(vectorOfIndividuals.begin() + (randomNumber));
-		crossoverIndividuals(settings.crossoverProbability, firstIndividual, secondIndividual);
-		newVectorOfIndividuals.push_back(firstIndividual);
-		if(settings.twoDescendants){
-			newVectorOfIndividuals.push_back(secondIndividual);
+		if(settings.numberOfDescendants <= 2){
+			crossoverIndividuals(settings.crossoverProbability, firstIndividual, secondIndividual);
+			newVectorOfIndividuals.push_back(firstIndividual);
+			if(settings.numberOfDescendants == 2){
+				newVectorOfIndividuals.push_back(secondIndividual);
+			}
+		}
+		if(settings.numberOfDescendants > 2)
+		{
+			crossoverForManyIndividuals(firstIndividual,secondIndividual,newVectorOfIndividuals,settings);
 		}
 	}
 	vectorOfIndividuals.insert(vectorOfIndividuals.end(), newVectorOfIndividuals.begin(), newVectorOfIndividuals.end());
@@ -158,10 +164,10 @@ void Population::Mutation(double mutation_probability, Dataset<double, double> &
 			random_int = uni(mt);
 			if(random_int < (mutation_probability * 100)){
 				random_feature_and_label = unif(rng);
-				while(!valid_label)
-				{
+				while(!valid_label){
 					random_feature_and_label = unif(rng);
-					if (training_set.getVectorOfLabels()[random_feature_and_label][0] == individual.getLabelsVector()[index][0]) {
+					if(training_set.getVectorOfLabels()[random_feature_and_label][0] ==
+					   individual.getLabelsVector()[index][0]){
 						individual.ChangeFeature(index, training_set.getVectorOfFeatures()[random_feature_and_label]);
 						individual.ChangeLabel(index, training_set.getVectorOfLabels()[random_feature_and_label]);
 						valid_label = true;
